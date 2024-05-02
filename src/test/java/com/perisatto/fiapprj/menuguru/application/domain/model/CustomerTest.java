@@ -1,16 +1,13 @@
 package com.perisatto.fiapprj.menuguru.application.domain.model;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import org.junit.jupiter.api.Test;
 
-import com.perisatto.fiapprj.menuguru.application.domain.model.CPF;
-import com.perisatto.fiapprj.menuguru.application.domain.model.Customer;
+import org.junit.jupiter.api.Test;
 
 public class CustomerTest {
 
 	@Test
 	void givenValidCPF_thenRegisterCustomer() throws Exception {
-
 		String customerName = "Roberto Machado";
 		String customerEmail = "roberto.machado@bestmail.com";
 		String documentNumber = "90779778057";
@@ -43,7 +40,6 @@ public class CustomerTest {
 
 	@Test
 	void givenInvalidEmail_thenRefusesToRegisterCustomer() throws Exception {
-
 		try { 
 			String customerName = "Roberto Machado";
 			String customerEmail = "roberto.machadobestmail.com";
@@ -59,13 +55,12 @@ public class CustomerTest {
 			assertThat(customer.getEmail()).isNull();
 			assertThat(customer.getDocumentNumber()).isNull();
 		}catch (Exception e) {
-			assertThat(e.getMessage()).isEqualTo("E-mail inválido");
+			assertThat(e.getMessage()).isEqualTo("Campos inválidos");
 		}
 	}
 	
 	@Test
 	void givenEmptyName_thenRefusesToRegisterCustomer() throws Exception {
-
 		try { 
 			String customerName = "";
 			String customerEmail = "roberto.machadobestmail.com";
@@ -81,7 +76,7 @@ public class CustomerTest {
 			assertThat(customer.getEmail()).isNull();
 			assertThat(customer.getDocumentNumber()).isNull();
 		}catch (Exception e) {
-			assertThat(e.getMessage()).isEqualTo("Nome não pode ser vazio");
+			assertThat(e.getMessage()).isEqualTo("Campos inválidos");
 		}
 	}
 }
