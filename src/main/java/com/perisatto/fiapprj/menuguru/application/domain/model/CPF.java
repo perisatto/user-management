@@ -5,6 +5,8 @@ import java.util.InputMismatchException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.perisatto.fiapprj.menuguru.handler.exceptions.CustomerValidationException;
+
 public class CPF {
 
 	static final Logger logger = LogManager.getLogger(CPF.class);
@@ -13,8 +15,8 @@ public class CPF {
 
 	public CPF(String documentNumber) throws Exception {			
 		if(!this.validateCPF(documentNumber)) {
-			Exception error = new Exception("CPF inválido");
-			throw error;
+			logger.warn("Error validating customer data");
+			throw new CustomerValidationException("cstm-3001", "invalid document number");
 		}
 
 		this.documentNumber = documentNumber;
@@ -48,7 +50,7 @@ public class CPF {
 			result = 11 - (sum % 11);
 
 			if((result==10)||(result==11)) {
-				dig10 = 0;				
+				dig10 = (char)48;				
 			}else {
 				dig10 = (char)(result + 48);
 			}
@@ -65,7 +67,7 @@ public class CPF {
 
 			result = 11 - (sum % 11);
 			if((result==10)||(result==11)) {
-				dig11 = 0;				
+				dig11 = (char)48;				
 			}else {
 				dig11 = (char)(result + 48);
 			}

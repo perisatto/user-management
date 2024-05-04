@@ -3,57 +3,57 @@ package com.perisatto.fiapprj.menuguru.application.domain.model;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.perisatto.fiapprj.menuguru.handler.exceptions.CustomerValidationException;
+
 public class Customer {	
 	
 	static final Logger logger = LogManager.getLogger(Customer.class);
+	private String messageValidation;
 	
-	private Integer id;
+	private Long id;
 	private String name = null;
 	private String email = null;
-	private final CPF documentNumber;
+	private CPF documentNumber;
 
-	public Customer(CPF documentNumber, String customerName, String customerEmail) throws Exception {
-		if(!validate(customerName, customerEmail)) {
-			Exception error = new Exception("Campos inválidos");
-			throw error;
+	public Customer(Long id, CPF documentNumber, String customerName, String customerEmail) throws Exception {
+		if(!validate(customerName, customerEmail, messageValidation)) {
+			logger.warn("Error validating customer data");
+			throw new CustomerValidationException("cstm-2001", messageValidation);
 		}
 		
+		this.id = id;
 		this.documentNumber = documentNumber;
 		this.name = customerName;
 		this.email = customerEmail;	
 	}
 
 
-	private boolean validate(String customerName, String customerEmail) {			
+	private boolean validate(String customerName, String customerEmail, String message) {
+		messageValidation = "Error validating customer data: ";
+		Boolean valid = true;
 		if((customerName == null) || (customerName.isEmpty()) || (customerName.isBlank())) {
-			logger.debug("Error validating customer date: empty, null or blank name");
-			System.out.println("nome:" + customerName);
-			return false;			
+			logger.debug("Error validating customer data: empty, null or blank name");
+			messageValidation = messageValidation + "empty, null or blank name |";
+			valid = false;			
 		}
 
 		if((customerEmail == null) || (customerEmail.isEmpty()) || (customerEmail.isBlank())) {
-			logger.debug("Error validating customer date: empty, null or blank e-mail");
-			System.out.println("email " + customerEmail);
-			return false;			
+			logger.debug("Error validating customer data: empty, null or blank e-mail");
+			messageValidation = messageValidation + "empty, null or blank e-mail | ";
+			valid = false;			
 		} else if(!customerEmail.matches("^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")) {
-			logger.debug("Error validating customer date: invalid e-mail format");
-			System.out.println("email format " + customerEmail);
-			return false;
+			logger.debug("Error validating customer data: invalid e-mail format");
+			messageValidation = messageValidation + "invalid e-mail format | ";
+			valid = false;
 		}
 		
-		return true;
-	}
-
-
-	public Customer(CPF cpf) {
-		this.documentNumber = null;
+		return valid;
 	}
 
 
 	public String getName() {
 		return name;
 	}
-
 
 	public void setName(String name) {
 		this.name = name;
@@ -74,8 +74,16 @@ public class Customer {
 		return documentNumber;
 	}
 
-
-	public Integer getId() {
+	public void setDocumentNumber(CPF documentNumber) {
+		this.documentNumber = documentNumber;
+	}
+	
+	public Long getId() {
 		return id;
 	}
+	
+	public void setId(Long id) {
+		this.id = id;
+	}
+	
 }

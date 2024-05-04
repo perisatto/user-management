@@ -9,13 +9,22 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "Customer")
 public class CustomerJpaEntity {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long idCustomer;
 	private String name;
 	private String documentNumber;
 	private String eMail;
+	
+	
+	public Long getIdCustomer() {
+		return idCustomer;
+	}
+	
+	public void setIdCustomer(Long idCustomer) {
+		this.idCustomer = idCustomer;
+	}
 	
 	public String getName() {
 		return name;

@@ -13,7 +13,7 @@ public class CustomerTest {
 		String documentNumber = "90779778057";
 
 		CPF customerCPF = new CPF(documentNumber);
-		Customer customer = new Customer(customerCPF, customerName, customerEmail);
+		Customer customer = new Customer(null, customerCPF, customerName, customerEmail);
 
 		assertThat(customer.getName()).isEqualTo(customerName);
 		assertThat(customer.getEmail()).isEqualTo(customerEmail);
@@ -28,13 +28,13 @@ public class CustomerTest {
 			String documentNumber = "90779778058";
 
 			CPF customerCPF = new CPF(documentNumber);
-			Customer customer = new Customer(customerCPF, customerName, customerEmail);
+			Customer customer = new Customer(null, customerCPF, customerName, customerEmail);
 
 			assertThat(customer.getName()).isNull();
 			assertThat(customer.getEmail()).isNull();
 			assertThat(customer.getDocumentNumber()).isNull();
 		}catch (Exception e) {
-			assertThat(e.getMessage()).isEqualTo("CPF inválido");
+			assertThat(e.getMessage()).isEqualTo("invalid document number");
 		}
 	}
 
@@ -46,7 +46,7 @@ public class CustomerTest {
 			String documentNumber = "90779778057";
 
 			CPF customerCPF = new CPF(documentNumber);
-			Customer customer = new Customer(customerCPF, customerName, customerEmail);
+			Customer customer = new Customer(null, customerCPF, customerName, customerEmail);
 
 			assertThat(customer.getName()).isEqualTo(customerName);
 			assertThat(customer.getEmail()).isEqualTo(customerEmail);
@@ -55,7 +55,7 @@ public class CustomerTest {
 			assertThat(customer.getEmail()).isNull();
 			assertThat(customer.getDocumentNumber()).isNull();
 		}catch (Exception e) {
-			assertThat(e.getMessage()).isEqualTo("Campos inválidos");
+			assertThat(e.getMessage()).contains("invalid e-mail format");
 		}
 	}
 	
@@ -67,7 +67,7 @@ public class CustomerTest {
 			String documentNumber = "90779778057";
 
 			CPF customerCPF = new CPF(documentNumber);
-			Customer customer = new Customer(customerCPF, customerName, customerEmail);
+			Customer customer = new Customer(null, customerCPF, customerName, customerEmail);
 
 			assertThat(customer.getName()).isEqualTo(customerName);
 			assertThat(customer.getEmail()).isEqualTo(customerEmail);
@@ -76,7 +76,7 @@ public class CustomerTest {
 			assertThat(customer.getEmail()).isNull();
 			assertThat(customer.getDocumentNumber()).isNull();
 		}catch (Exception e) {
-			assertThat(e.getMessage()).isEqualTo("Campos inválidos");
+			assertThat(e.getMessage()).contains("empty, null or blank name");
 		}
 	}
 }

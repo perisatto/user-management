@@ -4,10 +4,11 @@ import java.util.Optional;
 
 import com.perisatto.fiapprj.menuguru.adapter.out.CustomerJpaEntity;
 import com.perisatto.fiapprj.menuguru.application.domain.model.CPF;
+import com.perisatto.fiapprj.menuguru.application.domain.model.Customer;
 
 
 public interface LoadCustomerPort {
-	Optional<CustomerJpaEntity> loadCustomer(Long customerId);
+	Optional<CustomerJpaEntity> loadCustomer(Long customerId) throws Exception;
 	
-	Optional<CustomerJpaEntity> getCustomerByCPF(CPF customerDocument);
+	Optional<Customer> getCustomerByCPF(CPF customerDocument) throws Exception;
 }

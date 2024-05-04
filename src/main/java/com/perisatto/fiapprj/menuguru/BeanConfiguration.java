@@ -5,7 +5,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 import com.perisatto.fiapprj.menuguru.application.domain.service.CustomerService;
-import com.perisatto.fiapprj.menuguru.application.port.in.CreateCustomerUseCase;
+import com.perisatto.fiapprj.menuguru.application.port.in.ManageCustomerUseCase;
 import com.perisatto.fiapprj.menuguru.application.port.out.CreateCustomerPort;
 import com.perisatto.fiapprj.menuguru.application.port.out.LoadCustomerPort;
 
@@ -14,7 +14,7 @@ import com.perisatto.fiapprj.menuguru.application.port.out.LoadCustomerPort;
 public class BeanConfiguration {
 
 	@Bean
-	CreateCustomerUseCase createCustomerUseCase(LoadCustomerPort loadCustomerPort) {
-		return new CustomerService(loadCustomerPort);
+	ManageCustomerUseCase manageCustomerUseCase(LoadCustomerPort loadCustomerPort, CreateCustomerPort createCustomerPort) {
+		return new CustomerService(loadCustomerPort, createCustomerPort);
 	}
 }
