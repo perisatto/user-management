@@ -8,9 +8,7 @@ import org.apache.logging.log4j.Logger;
 import com.perisatto.fiapprj.menuguru.application.domain.model.CPF;
 import com.perisatto.fiapprj.menuguru.application.domain.model.Customer;
 import com.perisatto.fiapprj.menuguru.application.port.in.ManageCustomerUseCase;
-import com.perisatto.fiapprj.menuguru.application.port.out.CreateCustomerPort;
-import com.perisatto.fiapprj.menuguru.application.port.out.LoadCustomerPort;
-import com.perisatto.fiapprj.menuguru.application.port.out.UpdateCustomerPort;
+import com.perisatto.fiapprj.menuguru.application.port.out.ManageCustomerPort;
 import com.perisatto.fiapprj.menuguru.handler.exceptions.NotFoundException;
 import com.perisatto.fiapprj.menuguru.handler.exceptions.ValidationException;
 
@@ -18,14 +16,10 @@ public class CustomerService implements ManageCustomerUseCase {
 
 	static final Logger logger = LogManager.getLogger(CustomerService.class);
 
-	private CreateCustomerPort createCustomerPort;
-	private LoadCustomerPort loadCustomerPort;
-	private UpdateCustomerPort updateCustomerPort;
+	private ManageCustomerPort manageCustomerPort;
 
-	public CustomerService(LoadCustomerPort loadCustomerPort, CreateCustomerPort createCustomerPort, UpdateCustomerPort updateCustomerPort) {
-		this.loadCustomerPort = loadCustomerPort;
-		this.createCustomerPort = createCustomerPort;
-		this.updateCustomerPort = updateCustomerPort;
+	public CustomerService(ManageCustomerPort manageCustomerPort) {
+		this.manageCustomerPort = manageCustomerPort;
 	}
 
 	public Customer createCustomer(String documentNumber, String name, String email) throws Exception {
@@ -38,9 +32,9 @@ public class CustomerService implements ManageCustomerUseCase {
 
 		newCustomer = new Customer(null, newCustomerDocumentNumber, newCustomerName, newCustomerEmail);
 
-		if(loadCustomerPort.getCustomerByCPF(newCustomer.getDocumentNumber()).isEmpty()) {
+		if(manageCustomerPort.getCustomerByCPF(newCustomer.getDocumentNumber()).isEmpty()) {
 			logger.info("Customer inexistent... creating new customer register.");
-			newCustomer = createCustomerPort.createCustomer(newCustomer);
+			newCustomer = manageCustomerPort.createCustomer(newCustomer);
 			logger.info("New customer register created.");
 			return newCustomer;
 		}else {
@@ -52,7 +46,7 @@ public class CustomerService implements ManageCustomerUseCase {
 	public Customer getCustomerByCPF(String documentNumber) throws Exception {
 		CPF customerDocument;
 		customerDocument = new CPF(documentNumber);			
-		Optional<Customer> customer = loadCustomerPort.getCustomerByCPF(customerDocument);
+		Optional<Customer> customer = manageCustomerPort.getCustomerByCPF(customerDocument);
 		if(customer.isPresent()) {
 			return customer.get();
 		} else {
@@ -61,7 +55,7 @@ public class CustomerService implements ManageCustomerUseCase {
 	}
 
 	public Customer getCustomerById(Long customerId) throws Exception {	
-		Optional<Customer> customer = loadCustomerPort.getCustomerById(customerId);
+		Optional<Customer> customer = manageCustomerPort.getCustomerById(customerId);
 		if(customer.isPresent()) {
 			return customer.get();
 		} else {
@@ -71,7 +65,7 @@ public class CustomerService implements ManageCustomerUseCase {
 
 	@Override
 	public Customer updateCustomer(Long customerId, String documentNumber, String customerName, String customerEmail) throws Exception {	
-		Optional<Customer> oldCustomerData = loadCustomerPort.getCustomerById(customerId);
+		Optional<Customer> oldCustomerData = manageCustomerPort.getCustomerById(customerId);
 		if(oldCustomerData.isPresent()) {
 			
 			CPF newDocumentNumber;
@@ -98,7 +92,7 @@ public class CustomerService implements ManageCustomerUseCase {
 			
 			Customer newCustomerData = new Customer(customerId, newDocumentNumber, newCustomerName, newCustomerEmail);
 			
-			Optional<Customer> updatedCustomerData = updateCustomerPort.updateCustomer(newCustomerData);
+			Optional<Customer> updatedCustomerData = manageCustomerPort.updateCustomer(newCustomerData);
 			if(updatedCustomerData.isEmpty()) {
 				logger.error("Error while updating customer data... customer not found during update action.");
 				throw new Exception("Error while updating customer data. Please refer to application log for details.");

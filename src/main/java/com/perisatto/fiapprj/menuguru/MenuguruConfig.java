@@ -10,9 +10,7 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import com.perisatto.fiapprj.menuguru.application.domain.service.CustomerService;
 import com.perisatto.fiapprj.menuguru.application.port.in.ManageCustomerUseCase;
-import com.perisatto.fiapprj.menuguru.application.port.out.CreateCustomerPort;
-import com.perisatto.fiapprj.menuguru.application.port.out.LoadCustomerPort;
-import com.perisatto.fiapprj.menuguru.application.port.out.UpdateCustomerPort;
+import com.perisatto.fiapprj.menuguru.application.port.out.ManageCustomerPort;
 
 @Configuration
 public class MenuguruConfig {
@@ -33,7 +31,7 @@ public class MenuguruConfig {
 	}
 	
 	@Bean
-	ManageCustomerUseCase manageCustomerUseCase(LoadCustomerPort loadCustomerPort, CreateCustomerPort createCustomerPort, UpdateCustomerPort updateCustomerPort) {
-		return new CustomerService(loadCustomerPort, createCustomerPort, updateCustomerPort);
+	ManageCustomerUseCase manageCustomerUseCase(ManageCustomerPort manageCustomerPort) {
+		return new CustomerService(manageCustomerPort);
 	}
 }

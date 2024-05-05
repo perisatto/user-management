@@ -7,47 +7,25 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
-import com.perisatto.fiapprj.menuguru.adapter.out.CustomerJpaEntity;
 import com.perisatto.fiapprj.menuguru.application.domain.model.CPF;
 import com.perisatto.fiapprj.menuguru.application.domain.model.Customer;
-import com.perisatto.fiapprj.menuguru.application.port.out.CreateCustomerPort;
-import com.perisatto.fiapprj.menuguru.application.port.out.LoadCustomerPort;
-import com.perisatto.fiapprj.menuguru.application.port.out.UpdateCustomerPort;
+import com.perisatto.fiapprj.menuguru.application.port.out.ManageCustomerPort;
 import com.perisatto.fiapprj.menuguru.handler.exceptions.NotFoundException;
 import com.perisatto.fiapprj.menuguru.handler.exceptions.ValidationException;
 
 public class CustomerServiceTest {
 
-	private final LoadCustomerPort loadCustomerPort = new LoadCustomerPort() {
+	private ManageCustomerPort manageCustomerPortUpdate = new ManageCustomerPort() {
 
 		@Override
-		public Optional<Customer> getCustomerByCPF(CPF customerDocument) {						
+		public Customer createCustomer(Customer customer) {
 			try {
-				CPF documentNumber = new CPF("90779778057");
-				if(documentNumber.getDocumentNumber() == customerDocument.getDocumentNumber()) {					
-					Customer customer = new Customer(10L, documentNumber, "Roberto Machado", "roberto.machado@bestmail.com");
-					return Optional.of(customer);
-				} else {
-					return Optional.empty();
-				}
+				Customer newCustomer = new Customer(10L, customer.getDocumentNumber(), customer.getName(), customer.getEmail());
+				return newCustomer;
 			} catch (Exception e) {
-				return Optional.empty();
+				return null;
 			}
 		}
-
-		@Override
-		public Optional<Customer> getCustomerById(Long customerId) throws Exception {
-			if(customerId == 10L) {	
-				CPF documentNumber = new CPF("90779778057");
-				Customer customer = new Customer(10L, documentNumber, "Roberto Machado", "roberto.machado@bestmail.com");
-				return Optional.of(customer);
-			} else {
-				return Optional.empty();
-			}
-		}
-	};
-
-	private LoadCustomerPort loadCustomerPortUpdate = new LoadCustomerPort() {
 		
 		@Override
 		public Optional<Customer> getCustomerById(Long customerId) throws Exception {
@@ -74,9 +52,14 @@ public class CustomerServiceTest {
 				return Optional.empty();
 			}
 		}
+		
+		@Override
+		public Optional<Customer> updateCustomer(Customer customer) throws Exception {
+			return Optional.of(customer);
+		}
 	};
 	
-	private final CreateCustomerPort createCustomerPort = new CreateCustomerPort() {
+	private final ManageCustomerPort manageCustomerPort = new ManageCustomerPort() {
 
 		@Override
 		public Customer createCustomer(Customer customer) {
@@ -87,15 +70,39 @@ public class CustomerServiceTest {
 				return null;
 			}
 		}
-	};
-	
-	private final UpdateCustomerPort updateCustomerPort = new UpdateCustomerPort() {
+		
+		@Override
+		public Optional<Customer> getCustomerByCPF(CPF customerDocument) {						
+			try {
+				CPF documentNumber = new CPF("90779778057");
+				if(documentNumber.getDocumentNumber() == customerDocument.getDocumentNumber()) {					
+					Customer customer = new Customer(10L, documentNumber, "Roberto Machado", "roberto.machado@bestmail.com");
+					return Optional.of(customer);
+				} else {
+					return Optional.empty();
+				}
+			} catch (Exception e) {
+				return Optional.empty();
+			}
+		}
+
+		@Override
+		public Optional<Customer> getCustomerById(Long customerId) throws Exception {
+			if(customerId == 10L) {	
+				CPF documentNumber = new CPF("90779778057");
+				Customer customer = new Customer(10L, documentNumber, "Roberto Machado", "roberto.machado@bestmail.com");
+				return Optional.of(customer);
+			} else {
+				return Optional.empty();
+			}
+		}
 		
 		@Override
 		public Optional<Customer> updateCustomer(Customer customer) throws Exception {
 			return Optional.of(customer);
 		}
 	};
+	
 
 	@Test
 	void givenValidCPF_thenRegisterCustomer() throws Exception {		
@@ -103,7 +110,7 @@ public class CustomerServiceTest {
 		String customerEmail = "roberto.machado@bestmail.com";
 		String documentNumber = "35732996010";
 
-		CustomerService newCustomerService = new CustomerService(loadCustomerPort, createCustomerPort, updateCustomerPort);
+		CustomerService newCustomerService = new CustomerService(manageCustomerPort);
 
 		Customer customer = newCustomerService.createCustomer(documentNumber, customerName, customerEmail);
 
@@ -119,7 +126,7 @@ public class CustomerServiceTest {
 		String customerEmail = "roberto.machado@bestmail.com";
 		String documentNumber = "90779778058";
 
-		CustomerService newCustomerService = new CustomerService(loadCustomerPort, createCustomerPort, updateCustomerPort);
+		CustomerService newCustomerService = new CustomerService(manageCustomerPort);
 
 
 		try {
@@ -138,7 +145,7 @@ public class CustomerServiceTest {
 		String customerEmail = "roberto.machadobestmail.com";
 		String documentNumber = "90779778057";
 
-		CustomerService newCustomerService = new CustomerService(loadCustomerPort, createCustomerPort, updateCustomerPort);
+		CustomerService newCustomerService = new CustomerService(manageCustomerPort);
 
 		try {
 			Customer customer = newCustomerService.createCustomer(documentNumber, customerName, customerEmail);
@@ -156,7 +163,7 @@ public class CustomerServiceTest {
 		String customerEmail = "roberto.machadobestmail.com";
 		String documentNumber = "90779778057";
 
-		CustomerService newCustomerService = new CustomerService(loadCustomerPort, createCustomerPort, updateCustomerPort);
+		CustomerService newCustomerService = new CustomerService(manageCustomerPort);
 
 		try {
 			Customer customer = newCustomerService.createCustomer(documentNumber, customerName, customerEmail);
@@ -172,7 +179,7 @@ public class CustomerServiceTest {
 		try {
 			String documentNumber = "90779778057";
 
-			CustomerService newCustomerService = new CustomerService(loadCustomerPort, createCustomerPort, updateCustomerPort);
+			CustomerService newCustomerService = new CustomerService(manageCustomerPort);
 
 			Customer customer = newCustomerService.getCustomerByCPF(documentNumber);
 
@@ -189,7 +196,7 @@ public class CustomerServiceTest {
 		try {
 			String documentNumber = "35732996010";
 
-			CustomerService newCustomerService = new CustomerService(loadCustomerPort, createCustomerPort, updateCustomerPort);
+			CustomerService newCustomerService = new CustomerService(manageCustomerPort);
 
 			Customer customer = newCustomerService.getCustomerByCPF(documentNumber);
 
@@ -204,7 +211,7 @@ public class CustomerServiceTest {
 
 	@Test
 	void givenValidId_thenGetCustomer () {
-		CustomerService newCustomerService = new CustomerService(loadCustomerPort, createCustomerPort, updateCustomerPort);
+		CustomerService newCustomerService = new CustomerService(manageCustomerPort);
 
 		Long customerId = 10L;
 
@@ -222,7 +229,7 @@ public class CustomerServiceTest {
 	@Test
 	void giveInexistentId_thenGetCustomerNotFound () {
 		try {
-			CustomerService newCustomerService = new CustomerService(loadCustomerPort, createCustomerPort, updateCustomerPort);
+			CustomerService newCustomerService = new CustomerService(manageCustomerPort);
 
 			Long customerId = 20L;
 
@@ -238,7 +245,7 @@ public class CustomerServiceTest {
 
 	@Test
 	void givenNewName_thenUpdateName () throws Exception {		
-		CustomerService customerService = new CustomerService(loadCustomerPortUpdate, createCustomerPort, updateCustomerPort);
+		CustomerService customerService = new CustomerService(manageCustomerPortUpdate);
 
 		Long customerId = 10L;
 		String customerName = "Roberto Facao";
@@ -259,7 +266,7 @@ public class CustomerServiceTest {
 
 	@Test
 	void givenNewEmail_thenUpdateEmail () throws Exception {
-		CustomerService customerService = new CustomerService(loadCustomerPortUpdate, createCustomerPort, updateCustomerPort);
+		CustomerService customerService = new CustomerService(manageCustomerPortUpdate);
 
 		Long customerId = 10L;
 		String customerName = "Roberto Facao";
@@ -281,7 +288,7 @@ public class CustomerServiceTest {
 	@Test
 	void givenInvalidNewEmail_thenRefusesUpdateEmail () throws Exception {
 		try {
-			CustomerService customerService = new CustomerService(loadCustomerPortUpdate, createCustomerPort, updateCustomerPort);
+			CustomerService customerService = new CustomerService(manageCustomerPortUpdate);
 
 			Long customerId = 10L;
 			String customerName = "Roberto Facao";
@@ -301,7 +308,7 @@ public class CustomerServiceTest {
 
 	@Test
 	void givenNewCPF_thenUpdateCPF () throws Exception {
-		CustomerService customerService = new CustomerService(loadCustomerPortUpdate, createCustomerPort, updateCustomerPort);
+		CustomerService customerService = new CustomerService(manageCustomerPortUpdate);
 
 		Long customerId = 10L;
 		String customerName = "Roberto Facao";
@@ -323,7 +330,7 @@ public class CustomerServiceTest {
 	@Test
 	void givenInvalidNewCPF_thenRefusesUpdateCPF () throws Exception {
 		try {
-			CustomerService customerService = new CustomerService(loadCustomerPortUpdate, createCustomerPort, updateCustomerPort);
+			CustomerService customerService = new CustomerService(manageCustomerPortUpdate);
 
 			Long customerId = 10L;
 			String customerName = "Roberto Machado";
@@ -339,5 +346,15 @@ public class CustomerServiceTest {
 			assertThatExceptionOfType(ValidationException.class);
 			assertThat(e.getMessage()).contains("Invalid document number");
 		}
+	}
+	
+	@Test
+	void givenId_thenDeleteCustomer () {
+		CustomerService customerService = new CustomerService(manageCustomerPort);
+	}
+	
+	@Test
+	void givenInexistentId_thenRefusesDeleteCustomer () {
+		CustomerService customerService = new CustomerService(manageCustomerPort);
 	}
 }

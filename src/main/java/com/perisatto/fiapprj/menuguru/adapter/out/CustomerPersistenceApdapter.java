@@ -6,12 +6,10 @@ import org.springframework.stereotype.Component;
 
 import com.perisatto.fiapprj.menuguru.application.domain.model.CPF;
 import com.perisatto.fiapprj.menuguru.application.domain.model.Customer;
-import com.perisatto.fiapprj.menuguru.application.port.out.CreateCustomerPort;
-import com.perisatto.fiapprj.menuguru.application.port.out.LoadCustomerPort;
-import com.perisatto.fiapprj.menuguru.application.port.out.UpdateCustomerPort;
+import com.perisatto.fiapprj.menuguru.application.port.out.ManageCustomerPort;
 
 @Component
-public class CustomerPersistenceApdapter implements LoadCustomerPort, CreateCustomerPort, UpdateCustomerPort {
+public class CustomerPersistenceApdapter implements ManageCustomerPort {
 
 	private CustomerRepository customerRepository;
 
