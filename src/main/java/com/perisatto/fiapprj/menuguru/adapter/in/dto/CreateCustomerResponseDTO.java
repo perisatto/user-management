@@ -1,11 +1,19 @@
-package com.perisatto.fiapprj.menuguru.adapter.in;
+package com.perisatto.fiapprj.menuguru.adapter.in.dto;
 
-public class CreateCustomerRequestDTO {
+public class CreateCustomerResponseDTO {
+	private Long id;
 	private String documentNumber;
 	private String name;
 	private String eMail;
 	
 	
+	public Long getId() {
+		return id;
+	}
+	
+	public void setId(Long id) {
+		this.id = id;
+	}
 	public String getDocumentNumber() {
 		return documentNumber;
 	}

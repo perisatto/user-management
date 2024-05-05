@@ -3,7 +3,9 @@ spring:
     name: menuguru
   profiles:
     active: ${MENUGURU_ENV}
-
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: true
 ---
 spring:
   config:

@@ -5,7 +5,7 @@ import java.util.InputMismatchException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.perisatto.fiapprj.menuguru.handler.exceptions.CustomerValidationException;
+import com.perisatto.fiapprj.menuguru.handler.exceptions.ValidationException;
 
 public class CPF {
 
@@ -16,7 +16,7 @@ public class CPF {
 	public CPF(String documentNumber) throws Exception {			
 		if(!this.validateCPF(documentNumber)) {
 			logger.warn("Error validating customer data");
-			throw new CustomerValidationException("cstm-3001", "invalid document number");
+			throw new ValidationException("cstm-3001", "Invalid document number");
 		}
 
 		this.documentNumber = documentNumber;

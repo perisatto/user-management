@@ -34,7 +34,7 @@ public class CustomerTest {
 			assertThat(customer.getEmail()).isNull();
 			assertThat(customer.getDocumentNumber()).isNull();
 		}catch (Exception e) {
-			assertThat(e.getMessage()).isEqualTo("invalid document number");
+			assertThat(e.getMessage()).isEqualTo("Invalid document number");
 		}
 	}
 

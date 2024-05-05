@@ -3,7 +3,7 @@ package com.perisatto.fiapprj.menuguru.application.domain.model;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.perisatto.fiapprj.menuguru.handler.exceptions.CustomerValidationException;
+import com.perisatto.fiapprj.menuguru.handler.exceptions.ValidationException;
 
 public class Customer {	
 	
@@ -18,7 +18,7 @@ public class Customer {
 	public Customer(Long id, CPF documentNumber, String customerName, String customerEmail) throws Exception {
 		if(!validate(customerName, customerEmail, messageValidation)) {
 			logger.warn("Error validating customer data");
-			throw new CustomerValidationException("cstm-2001", messageValidation);
+			throw new ValidationException("cstm-2001", messageValidation);
 		}
 		
 		this.id = id;

@@ -1,44 +1,28 @@
 package com.perisatto.fiapprj.menuguru.handler.errors;
 
-import java.time.LocalDateTime;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class HttpErrorHandler {
 	
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
-	private LocalDateTime timestamp;
-	private String error;
-	private String message;
+	private String type;
+	private String title;
 	private String detail;
-	//TODO Criar informações de ajuda para cada erro.
-	private String help = "about:blank";
-
-	private HttpErrorHandler() {
-		timestamp = LocalDateTime.now();
-	}
+	private String instance;
 	
-	public HttpErrorHandler(String error, String message, String detail) {
-		this();
-		this.error = error;
-		this.message = message;
+	public HttpErrorHandler(String title, String detail, String instance) {
+		this.type = "about:blank";
+		this.title = title;
 		this.detail = detail;
+		this.setInstance(instance);
 	}
 
-	public String getError() {
-		return error;
+	public String getTitle() {
+		return title;
 	}
 
-	public void setError(String error) {
-		this.error = error;
-	}
-
-	public String getMessage() {
-		return message;
-	}
-
-	public void setMessage(String message) {
-		this.message = message;
+	public void setTitle(String title) {
+		this.title = title;
 	}
 
 	public String getDetail() {
@@ -49,13 +33,14 @@ public class HttpErrorHandler {
 		this.detail = detail;
 	}
 
-	public LocalDateTime getTimestamp() {
-		return timestamp;
+	public String getInstance() {
+		return instance;
 	}
 
-	public String getHelp() {
-		return help;
+	public void setInstance(String instance) {
+		this.instance = instance;
 	}
+
 	
 	
 }

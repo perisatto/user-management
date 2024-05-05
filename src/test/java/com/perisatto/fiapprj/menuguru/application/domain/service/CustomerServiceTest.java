@@ -1,6 +1,7 @@
 package com.perisatto.fiapprj.menuguru.application.domain.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import java.util.Optional;
 
@@ -11,22 +12,13 @@ import com.perisatto.fiapprj.menuguru.application.domain.model.CPF;
 import com.perisatto.fiapprj.menuguru.application.domain.model.Customer;
 import com.perisatto.fiapprj.menuguru.application.port.out.CreateCustomerPort;
 import com.perisatto.fiapprj.menuguru.application.port.out.LoadCustomerPort;
-import com.perisatto.fiapprj.menuguru.handler.exceptions.CustomerNotFoundException;
-import com.perisatto.fiapprj.menuguru.handler.exceptions.CustomerValidationException;
+import com.perisatto.fiapprj.menuguru.application.port.out.UpdateCustomerPort;
+import com.perisatto.fiapprj.menuguru.handler.exceptions.NotFoundException;
+import com.perisatto.fiapprj.menuguru.handler.exceptions.ValidationException;
 
 public class CustomerServiceTest {
 
 	private final LoadCustomerPort loadCustomerPort = new LoadCustomerPort() {
-
-		@Override
-		public Optional<CustomerJpaEntity> loadCustomer(Long customerId) {
-			CustomerJpaEntity customerJpaEntity = new CustomerJpaEntity();
-			customerJpaEntity.setIdCustomer(customerId);
-			customerJpaEntity.setDocumentNumber("90779778057");
-			customerJpaEntity.setName("Roberto Machado");
-			customerJpaEntity.seteMail("roberto.machado@bestmail.com");
-			return Optional.of(customerJpaEntity);
-		}
 
 		@Override
 		public Optional<Customer> getCustomerByCPF(CPF customerDocument) {						
@@ -42,8 +34,48 @@ public class CustomerServiceTest {
 				return Optional.empty();
 			}
 		}
+
+		@Override
+		public Optional<Customer> getCustomerById(Long customerId) throws Exception {
+			if(customerId == 10L) {	
+				CPF documentNumber = new CPF("90779778057");
+				Customer customer = new Customer(10L, documentNumber, "Roberto Machado", "roberto.machado@bestmail.com");
+				return Optional.of(customer);
+			} else {
+				return Optional.empty();
+			}
+		}
 	};
 
+	private LoadCustomerPort loadCustomerPortUpdate = new LoadCustomerPort() {
+		
+		@Override
+		public Optional<Customer> getCustomerById(Long customerId) throws Exception {
+			if(customerId == 10L) {	
+				CPF documentNumber = new CPF("65678860054");
+				Customer customer = new Customer(10L, documentNumber, "Roberto Facao", "roberto.facao@bestmail.com");
+				return Optional.of(customer);
+			} else {
+				return Optional.empty();
+			}
+		}
+		
+		@Override
+		public Optional<Customer> getCustomerByCPF(CPF customerDocument) throws Exception {
+			try {
+				CPF documentNumber = new CPF("65678860054");
+				if(documentNumber.getDocumentNumber() == customerDocument.getDocumentNumber()) {					
+					Customer customer = new Customer(10L, documentNumber, "Roberto Facao", "roberto.facao@bestmail.com");
+					return Optional.of(customer);
+				} else {
+					return Optional.empty();
+				}
+			} catch (Exception e) {
+				return Optional.empty();
+			}
+		}
+	};
+	
 	private final CreateCustomerPort createCustomerPort = new CreateCustomerPort() {
 
 		@Override
@@ -56,6 +88,14 @@ public class CustomerServiceTest {
 			}
 		}
 	};
+	
+	private final UpdateCustomerPort updateCustomerPort = new UpdateCustomerPort() {
+		
+		@Override
+		public Optional<Customer> updateCustomer(Customer customer) throws Exception {
+			return Optional.of(customer);
+		}
+	};
 
 	@Test
 	void givenValidCPF_thenRegisterCustomer() throws Exception {		
@@ -63,7 +103,7 @@ public class CustomerServiceTest {
 		String customerEmail = "roberto.machado@bestmail.com";
 		String documentNumber = "35732996010";
 
-		CustomerService newCustomerService = new CustomerService(loadCustomerPort, createCustomerPort);
+		CustomerService newCustomerService = new CustomerService(loadCustomerPort, createCustomerPort, updateCustomerPort);
 
 		Customer customer = newCustomerService.createCustomer(documentNumber, customerName, customerEmail);
 
@@ -79,15 +119,15 @@ public class CustomerServiceTest {
 		String customerEmail = "roberto.machado@bestmail.com";
 		String documentNumber = "90779778058";
 
-		CustomerService newCustomerService = new CustomerService(loadCustomerPort, createCustomerPort);
+		CustomerService newCustomerService = new CustomerService(loadCustomerPort, createCustomerPort, updateCustomerPort);
 
 
 		try {
 			Customer customer = newCustomerService.createCustomer(documentNumber, customerName, customerEmail);
-		} catch (CustomerValidationException e) {
-			assertThat(e.getMessage()).isEqualTo("invalid document number");
+		} catch (ValidationException e) {
+			assertThat(e.getMessage()).isEqualTo("Invalid document number");
 		} catch (Exception e) {
-			assertThat(e.getMessage()).isNotEqualTo("invalid document number");
+			assertThat(e.getMessage()).isNotEqualTo("Invalid document number");
 		}
 	}
 
@@ -98,11 +138,11 @@ public class CustomerServiceTest {
 		String customerEmail = "roberto.machadobestmail.com";
 		String documentNumber = "90779778057";
 
-		CustomerService newCustomerService = new CustomerService(loadCustomerPort, createCustomerPort);
+		CustomerService newCustomerService = new CustomerService(loadCustomerPort, createCustomerPort, updateCustomerPort);
 
 		try {
 			Customer customer = newCustomerService.createCustomer(documentNumber, customerName, customerEmail);
-		} catch (CustomerValidationException e) {
+		} catch (ValidationException e) {
 			assertThat(e.getMessage()).contains("invalid e-mail format");
 		} catch (Exception e) {
 			assertThat(e.getMessage()).doesNotContain("invalid e-mail format");
@@ -116,11 +156,11 @@ public class CustomerServiceTest {
 		String customerEmail = "roberto.machadobestmail.com";
 		String documentNumber = "90779778057";
 
-		CustomerService newCustomerService = new CustomerService(loadCustomerPort, createCustomerPort);
+		CustomerService newCustomerService = new CustomerService(loadCustomerPort, createCustomerPort, updateCustomerPort);
 
 		try {
 			Customer customer = newCustomerService.createCustomer(documentNumber, customerName, customerEmail);
-		} catch (CustomerValidationException e) {
+		} catch (ValidationException e) {
 			assertThat(e.getMessage()).contains("empty, null or blank name");
 		} catch (Exception e) {
 			assertThat(e.getMessage()).doesNotContain("empty, null or blank name");
@@ -132,12 +172,12 @@ public class CustomerServiceTest {
 		try {
 			String documentNumber = "90779778057";
 
-			CustomerService newCustomerService = new CustomerService(loadCustomerPort, createCustomerPort);
+			CustomerService newCustomerService = new CustomerService(loadCustomerPort, createCustomerPort, updateCustomerPort);
 
 			Customer customer = newCustomerService.getCustomerByCPF(documentNumber);
 
 			assertThat(customer.getDocumentNumber().getDocumentNumber()).isEqualTo(documentNumber);
-		} catch (CustomerNotFoundException e) {
+		} catch (NotFoundException e) {
 			assertThat(e.getMessage()).doesNotContain("Customer not found");
 		} catch (Exception e) {
 			assertThat(e.getMessage()).doesNotContain("Customer not found");
@@ -149,16 +189,155 @@ public class CustomerServiceTest {
 		try {
 			String documentNumber = "35732996010";
 
-			CustomerService newCustomerService = new CustomerService(loadCustomerPort, createCustomerPort);
+			CustomerService newCustomerService = new CustomerService(loadCustomerPort, createCustomerPort, updateCustomerPort);
 
 			Customer customer = newCustomerService.getCustomerByCPF(documentNumber);
 
 			assertThat(customer.getName()).isNullOrEmpty();
-		} catch (CustomerNotFoundException e) {
+		} catch (NotFoundException e) {
 			assertThat(e.getMessage()).isEqualTo("Customer not found");
 		} catch (Exception e) {
 			assertThat(e.getMessage()).doesNotContain("Customer not found");
 		}
 
+	}
+
+	@Test
+	void givenValidId_thenGetCustomer () {
+		CustomerService newCustomerService = new CustomerService(loadCustomerPort, createCustomerPort, updateCustomerPort);
+
+		Long customerId = 10L;
+
+		try {
+			Customer customer = newCustomerService.getCustomerById(customerId);
+
+			assertThat(customer.getId()).isEqualTo(customerId);
+		} catch (ValidationException e) {
+			assertThat(e.getMessage()).doesNotContain("Customer not found");
+		} catch (Exception e) {
+			assertThat(e.getMessage()).doesNotContain("Customer not found");
+		}
+	}
+
+	@Test
+	void giveInexistentId_thenGetCustomerNotFound () {
+		try {
+			CustomerService newCustomerService = new CustomerService(loadCustomerPort, createCustomerPort, updateCustomerPort);
+
+			Long customerId = 20L;
+
+			Customer customer = newCustomerService.getCustomerById(customerId);
+
+			assertThat(customer.getName()).isNullOrEmpty();
+		} catch (NotFoundException e) {
+			assertThat(e.getMessage()).isEqualTo("Customer not found");
+		} catch (Exception e) {
+			assertThat(e.getMessage()).doesNotContain("Customer not found");
+		}
+	}
+
+	@Test
+	void givenNewName_thenUpdateName () throws Exception {		
+		CustomerService customerService = new CustomerService(loadCustomerPortUpdate, createCustomerPort, updateCustomerPort);
+
+		Long customerId = 10L;
+		String customerName = "Roberto Facao";
+		String customerEmail = "roberto.facao@bestmail.com";
+		String documentNumber = "65678860054";
+
+		Customer customer = customerService.getCustomerById(customerId); 
+
+		Customer newCustomerData = customerService.updateCustomer(customerId, documentNumber, customerName, customerEmail);
+
+		customer = customerService.getCustomerById(customerId);
+
+		assertThat(customer.getId()).isEqualTo(newCustomerData.getId());
+		assertThat(customer.getDocumentNumber().getDocumentNumber()).isEqualTo(newCustomerData.getDocumentNumber().getDocumentNumber());
+		assertThat(customer.getName()).isEqualTo(newCustomerData.getName());
+		assertThat(customer.getEmail()).isEqualTo(newCustomerData.getEmail());
+	}
+
+	@Test
+	void givenNewEmail_thenUpdateEmail () throws Exception {
+		CustomerService customerService = new CustomerService(loadCustomerPortUpdate, createCustomerPort, updateCustomerPort);
+
+		Long customerId = 10L;
+		String customerName = "Roberto Facao";
+		String customerEmail = "roberto.facao@bestmail.com";
+		String documentNumber = "65678860054";
+
+		Customer customer = customerService.getCustomerById(customerId); 
+
+		Customer newCustomerData = customerService.updateCustomer(customerId, documentNumber, customerName, customerEmail);
+
+		customer = customerService.getCustomerById(customerId);
+
+		assertThat(customer.getId()).isEqualTo(newCustomerData.getId());
+		assertThat(customer.getDocumentNumber().getDocumentNumber()).isEqualTo(newCustomerData.getDocumentNumber().getDocumentNumber());
+		assertThat(customer.getName()).isEqualTo(newCustomerData.getName());
+		assertThat(customer.getEmail()).isEqualTo(newCustomerData.getEmail());
+	}
+
+	@Test
+	void givenInvalidNewEmail_thenRefusesUpdateEmail () throws Exception {
+		try {
+			CustomerService customerService = new CustomerService(loadCustomerPortUpdate, createCustomerPort, updateCustomerPort);
+
+			Long customerId = 10L;
+			String customerName = "Roberto Facao";
+			String customerEmail = "roberto.facaobestmail.com";
+			String documentNumber = "90779778057";
+
+			Customer customer = customerService.getCustomerById(customerId); 
+
+			Customer newCustomerData = customerService.updateCustomer(customerId, documentNumber, customerName, customerEmail);
+
+			customer = customerService.getCustomerById(customerId);
+		}catch (Exception e) {
+			assertThatExceptionOfType(ValidationException.class);
+			assertThat(e.getMessage()).contains("invalid e-mail format");
+		}
+	}
+
+	@Test
+	void givenNewCPF_thenUpdateCPF () throws Exception {
+		CustomerService customerService = new CustomerService(loadCustomerPortUpdate, createCustomerPort, updateCustomerPort);
+
+		Long customerId = 10L;
+		String customerName = "Roberto Facao";
+		String customerEmail = "roberto.facao@bestmail.com";
+		String documentNumber = "65678860054";
+
+		Customer customer = customerService.getCustomerById(customerId); 
+
+		Customer newCustomerData = customerService.updateCustomer(customerId, documentNumber, customerName, customerEmail);
+
+		customer = customerService.getCustomerById(customerId);
+
+		assertThat(customer.getId()).isEqualTo(newCustomerData.getId());
+		assertThat(customer.getDocumentNumber().getDocumentNumber()).isEqualTo(newCustomerData.getDocumentNumber().getDocumentNumber());
+		assertThat(customer.getName()).isEqualTo(newCustomerData.getName());
+		assertThat(customer.getEmail()).isEqualTo(newCustomerData.getEmail());
+	}
+
+	@Test
+	void givenInvalidNewCPF_thenRefusesUpdateCPF () throws Exception {
+		try {
+			CustomerService customerService = new CustomerService(loadCustomerPortUpdate, createCustomerPort, updateCustomerPort);
+
+			Long customerId = 10L;
+			String customerName = "Roberto Machado";
+			String customerEmail = "roberto.machado@bestmail.com";
+			String documentNumber = "90779778057";
+
+			Customer customer = customerService.getCustomerById(customerId); 
+
+			Customer newCustomerData = customerService.updateCustomer(customerId, documentNumber, customerName, customerEmail);
+			
+			customer = customerService.getCustomerById(customerId);
+		}catch (Exception e) {
+			assertThatExceptionOfType(ValidationException.class);
+			assertThat(e.getMessage()).contains("Invalid document number");
+		}
 	}
 }

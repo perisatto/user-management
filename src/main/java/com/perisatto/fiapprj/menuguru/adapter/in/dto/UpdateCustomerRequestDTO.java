@@ -1,19 +1,14 @@
-package com.perisatto.fiapprj.menuguru.adapter.in;
+package com.perisatto.fiapprj.menuguru.adapter.in.dto;
 
-public class CreateCustomerResponseDTO {
-	private Long id;
+import com.fasterxml.jackson.annotation.JsonAlias;
+
+public class UpdateCustomerRequestDTO {
 	private String documentNumber;
 	private String name;
-	private String eMail;
 	
+	@JsonAlias(value = "email")
+	private String email;
 	
-	public Long getId() {
-		return id;
-	}
-	
-	public void setId(Long id) {
-		this.id = id;
-	}
 	public String getDocumentNumber() {
 		return documentNumber;
 	}
@@ -27,10 +22,10 @@ public class CreateCustomerResponseDTO {
 		this.name = name;
 	}
 	
-	public String geteMail() {
-		return eMail;
+	public String getEmail() {
+		return email;
 	}
-	public void seteMail(String eMail) {
-		this.eMail = eMail;
+	public void setEmail(String eMail) {
+		this.email = eMail;
 	}
 }

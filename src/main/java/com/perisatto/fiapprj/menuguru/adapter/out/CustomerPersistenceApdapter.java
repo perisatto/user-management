@@ -8,25 +8,35 @@ import com.perisatto.fiapprj.menuguru.application.domain.model.CPF;
 import com.perisatto.fiapprj.menuguru.application.domain.model.Customer;
 import com.perisatto.fiapprj.menuguru.application.port.out.CreateCustomerPort;
 import com.perisatto.fiapprj.menuguru.application.port.out.LoadCustomerPort;
+import com.perisatto.fiapprj.menuguru.application.port.out.UpdateCustomerPort;
 
 @Component
-public class CustomerPersistenceApdapter implements LoadCustomerPort, CreateCustomerPort {
+public class CustomerPersistenceApdapter implements LoadCustomerPort, CreateCustomerPort, UpdateCustomerPort {
 
 	private CustomerRepository customerRepository;
 
 	public CustomerPersistenceApdapter(CustomerRepository customerRepository) {
 		this.customerRepository = customerRepository;
 	}
-
-	@Override
-	public Optional<CustomerJpaEntity> loadCustomer(Long customerId) throws Exception {
-		return customerRepository.findById(customerId);
-	}
-
+	
 	public Optional<Customer> getCustomerByCPF(CPF customerDocument) throws Exception {
 		Customer customer;
 
 		Optional<CustomerJpaEntity> customerJpaEntity = customerRepository.findByDocumentNumber(customerDocument.getDocumentNumber());
+		if(customerJpaEntity.isPresent()) {
+			CustomerMapper customerMapper = new CustomerMapper();				
+			customer = customerMapper.mapToDomainEntity(customerJpaEntity.get());
+		}else {
+			return Optional.empty();
+		}
+
+		return Optional.of(customer);
+	}
+	
+	public Optional<Customer> getCustomerById(Long customerId) throws Exception{
+		Customer customer;
+
+		Optional<CustomerJpaEntity> customerJpaEntity = customerRepository.findById(customerId);
 		if(customerJpaEntity.isPresent()) {
 			CustomerMapper customerMapper = new CustomerMapper();				
 			customer = customerMapper.mapToDomainEntity(customerJpaEntity.get());
@@ -45,5 +55,14 @@ public class CustomerPersistenceApdapter implements LoadCustomerPort, CreateCust
 		Customer newCustomer;
 		newCustomer = customerMapper.mapToDomainEntity(customerJpaEntity);
 		return newCustomer;
+	}
+
+	@Override
+	public Optional<Customer> updateCustomer(Customer customer) throws Exception {
+		CustomerMapper customerMapper = new CustomerMapper();
+		CustomerJpaEntity customerJpaEntity = customerMapper.mapToJpaEntity(customer);
+		customerJpaEntity = customerRepository.save(customerJpaEntity);
+		Customer updatedCustomer = customerMapper.mapToDomainEntity(customerJpaEntity);
+		return Optional.of(updatedCustomer);
 	}
 }
