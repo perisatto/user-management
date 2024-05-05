@@ -2,6 +2,7 @@ package com.perisatto.fiapprj.menuguru.application.domain.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.util.Optional;
 
@@ -26,7 +27,7 @@ public class CustomerServiceTest {
 				return null;
 			}
 		}
-		
+
 		@Override
 		public Optional<Customer> getCustomerById(Long customerId) throws Exception {
 			if(customerId == 10L) {	
@@ -37,7 +38,7 @@ public class CustomerServiceTest {
 				return Optional.empty();
 			}
 		}
-		
+
 		@Override
 		public Optional<Customer> getCustomerByCPF(CPF customerDocument) throws Exception {
 			try {
@@ -52,13 +53,22 @@ public class CustomerServiceTest {
 				return Optional.empty();
 			}
 		}
-		
+
 		@Override
 		public Optional<Customer> updateCustomer(Customer customer) throws Exception {
 			return Optional.of(customer);
 		}
+
+		@Override
+		public Boolean deleteCustomer(Long customerId) throws Exception {
+			if(customerId == 10L) {
+				return true;
+			} else {
+				throw new NotFoundException(null, "Customer not found");
+			}
+		}
 	};
-	
+
 	private final ManageCustomerPort manageCustomerPort = new ManageCustomerPort() {
 
 		@Override
@@ -70,7 +80,7 @@ public class CustomerServiceTest {
 				return null;
 			}
 		}
-		
+
 		@Override
 		public Optional<Customer> getCustomerByCPF(CPF customerDocument) {						
 			try {
@@ -96,13 +106,22 @@ public class CustomerServiceTest {
 				return Optional.empty();
 			}
 		}
-		
+
 		@Override
 		public Optional<Customer> updateCustomer(Customer customer) throws Exception {
 			return Optional.of(customer);
 		}
+
+		@Override
+		public Boolean deleteCustomer(Long customerId) throws Exception {
+			if(customerId == 10L) {
+				return true;
+			} else {
+				throw new NotFoundException(null, "Customer not found");
+			}
+		}
 	};
-	
+
 
 	@Test
 	void givenValidCPF_thenRegisterCustomer() throws Exception {		
@@ -340,21 +359,43 @@ public class CustomerServiceTest {
 			Customer customer = customerService.getCustomerById(customerId); 
 
 			Customer newCustomerData = customerService.updateCustomer(customerId, documentNumber, customerName, customerEmail);
-			
+
 			customer = customerService.getCustomerById(customerId);
 		}catch (Exception e) {
 			assertThatExceptionOfType(ValidationException.class);
 			assertThat(e.getMessage()).contains("Invalid document number");
 		}
 	}
-	
+
 	@Test
 	void givenId_thenDeleteCustomer () {
 		CustomerService customerService = new CustomerService(manageCustomerPort);
+		Boolean deleted = false;
+
+		try {
+			Long customerId = 10L;
+			deleted = customerService.deleteCustomer(customerId);
+			Customer customer = customerService.getCustomerById(customerId);
+
+		} catch (NotFoundException e) {
+			assertThat(deleted).isTrue();
+		} catch (Exception e) {
+			assertThatExceptionOfType(Exception.class);
+		}
 	}
-	
+
 	@Test
 	void givenInexistentId_thenRefusesDeleteCustomer () {
 		CustomerService customerService = new CustomerService(manageCustomerPort);
+		Boolean deleted = false;
+
+		try {
+			Long customerId = 20L;
+			deleted = customerService.deleteCustomer(customerId);
+		} catch (NotFoundException e) {
+			assertThatExceptionOfType(NotFoundException.class);
+		} catch (Exception e) {
+			assertThatExceptionOfType(Exception.class);
+		}
 	}
 }

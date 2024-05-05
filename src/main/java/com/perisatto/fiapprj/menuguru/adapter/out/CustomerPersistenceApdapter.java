@@ -63,4 +63,10 @@ public class CustomerPersistenceApdapter implements ManageCustomerPort {
 		Customer updatedCustomer = customerMapper.mapToDomainEntity(customerJpaEntity);
 		return Optional.of(updatedCustomer);
 	}
+
+	@Override
+	public Boolean deleteCustomer(Long customerId) throws Exception {
+		customerRepository.deleteById(customerId);
+		return null;
+	}
 }

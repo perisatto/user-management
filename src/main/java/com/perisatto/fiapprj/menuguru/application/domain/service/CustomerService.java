@@ -101,5 +101,18 @@ public class CustomerService implements ManageCustomerUseCase {
 		}else {
 			throw new NotFoundException("cstm-1004", "Customer not found");
 		}
+	}
+
+	@Override
+	public Boolean deleteCustomer(Long customerId) throws Exception {
+		Boolean deleted = false;
+		Optional<Customer> customer = manageCustomerPort.getCustomerById(customerId);		
+		if(customer.isPresent()) {
+			deleted = manageCustomerPort.deleteCustomer(customerId);
+			logger.warn("Customer register deleted: id=" + customer.get().getId() + " | documentNumber=" + customer.get().getDocumentNumber().getDocumentNumber());
+		} else {
+			throw new NotFoundException("cstm-1005", "Customer not found");
+		}
+		return deleted;
 	}	
 }

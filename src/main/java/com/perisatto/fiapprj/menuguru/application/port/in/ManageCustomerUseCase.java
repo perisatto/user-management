@@ -11,4 +11,6 @@ public interface ManageCustomerUseCase {
 	Customer getCustomerById(Long customerId) throws Exception;
 	
 	Customer updateCustomer(Long customerId, String documentNumber, String customerName, String customerEmail) throws Exception;
+	
+	Boolean deleteCustomer(Long customerId) throws Exception;
 }

@@ -13,4 +13,6 @@ public interface ManageCustomerPort {
 	Optional<Customer> getCustomerById(Long customerId) throws Exception;
 	
 	Optional<Customer> updateCustomer(Customer customer) throws Exception;
+	
+	Boolean deleteCustomer(Long customerId) throws Exception;
 }
