@@ -14,6 +14,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -30,6 +31,15 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 	
 	@Override
 	protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+		String resourcePath = requestProperties.getProperty("resourcePath");
+		String title = "Bad request";
+		String detail = ex.getMessage();
+		String instance = resourcePath;
+		return buildResponseEntity(new HttpErrorHandler(title, detail, instance), HttpStatus.BAD_REQUEST);
+	}
+	
+	@Override
+	protected ResponseEntity<Object> handleMissingServletRequestParameter(MissingServletRequestParameterException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
 		String resourcePath = requestProperties.getProperty("resourcePath");
 		String title = "Bad request";
 		String detail = ex.getMessage();
@@ -72,6 +82,8 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 		String instance = resourcePath;
 		return buildResponseEntity(new HttpErrorHandler(title, detail, instance), HttpStatus.INTERNAL_SERVER_ERROR);
 	}
+	
+	
 	
 	@ExceptionHandler(ValidationException.class)
 	protected ResponseEntity<Object> handleRequestSchemaValidation(ValidationException ex) {

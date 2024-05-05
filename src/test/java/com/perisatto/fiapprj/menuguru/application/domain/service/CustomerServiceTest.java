@@ -2,9 +2,10 @@ package com.perisatto.fiapprj.menuguru.application.domain.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
@@ -67,6 +68,12 @@ public class CustomerServiceTest {
 				throw new NotFoundException(null, "Customer not found");
 			}
 		}
+
+		@Override
+		public Set<Customer> findAll(Integer limit, Integer offset) throws Exception {
+			// TODO Auto-generated method stub
+			return null;
+		}
 	};
 
 	private final ManageCustomerPort manageCustomerPort = new ManageCustomerPort() {
@@ -119,6 +126,12 @@ public class CustomerServiceTest {
 			} else {
 				throw new NotFoundException(null, "Customer not found");
 			}
+		}
+
+		@Override
+		public Set<Customer> findAll(Integer limit, Integer offset) throws Exception {
+			// TODO Auto-generated method stub
+			return null;
 		}
 	};
 

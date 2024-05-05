@@ -2,6 +2,7 @@ package com.perisatto.fiapprj.menuguru.adapter.in;
 
 import java.net.URI;
 import java.util.Properties;
+import java.util.Set;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +16,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.perisatto.fiapprj.menuguru.adapter.in.dto.CreateCustomerRequestDTO;
 import com.perisatto.fiapprj.menuguru.adapter.in.dto.CreateCustomerResponseDTO;
+import com.perisatto.fiapprj.menuguru.adapter.in.dto.GetCustomerListResponseDTO;
 import com.perisatto.fiapprj.menuguru.adapter.in.dto.GetCustomerResponseDTO;
 import com.perisatto.fiapprj.menuguru.adapter.in.dto.UpdateCustomerRequestDTO;
 import com.perisatto.fiapprj.menuguru.application.domain.model.Customer;
@@ -59,6 +62,15 @@ public class CustomerController {
 		Customer customer = manageCustomerUseCase.getCustomerById(customerId);
 		ModelMapper customerMapper = new ModelMapper();
 		GetCustomerResponseDTO response = customerMapper.map(customer, GetCustomerResponseDTO.class);
+		return ResponseEntity.status(HttpStatus.OK).body(response);
+	}
+	
+	@GetMapping(value = "/customers", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<GetCustomerListResponseDTO> getAll(@RequestParam(value = "_page") Integer page, @RequestParam(value = "_size") Integer size) throws Exception {
+		requestProperties.setProperty("resourcePath", "/customers");
+		Set<Customer> customer = manageCustomerUseCase.findAllCustomers(size, page);
+		GetCustomerListResponseDTO response = new GetCustomerListResponseDTO();
+		response.setContent(customer, page, size);		
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 	

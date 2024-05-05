@@ -1,6 +1,7 @@
 package com.perisatto.fiapprj.menuguru.application.port.out;
 
 import java.util.Optional;
+import java.util.Set;
 
 import com.perisatto.fiapprj.menuguru.application.domain.model.CPF;
 import com.perisatto.fiapprj.menuguru.application.domain.model.Customer;
@@ -15,4 +16,6 @@ public interface ManageCustomerPort {
 	Optional<Customer> updateCustomer(Customer customer) throws Exception;
 	
 	Boolean deleteCustomer(Long customerId) throws Exception;
+
+	Set<Customer> findAll(Integer limit, Integer offset) throws Exception;
 }

@@ -1,7 +1,15 @@
 package com.perisatto.fiapprj.menuguru.adapter.out;
 
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import com.perisatto.fiapprj.menuguru.application.domain.model.CPF;
@@ -68,5 +76,18 @@ public class CustomerPersistenceApdapter implements ManageCustomerPort {
 	public Boolean deleteCustomer(Long customerId) throws Exception {
 		customerRepository.deleteById(customerId);
 		return null;
+	}
+
+	@Override
+	public Set<Customer> findAll(Integer limit, Integer page) throws Exception {
+		Pageable pageable = PageRequest.of(page, limit, Sort.by("idCustomer"));
+		Page<CustomerJpaEntity> customers = customerRepository.findAll(pageable);
+		Set<Customer> customersSet = new LinkedHashSet<Customer>();
+		
+		for (CustomerJpaEntity customer : customers) {
+			Customer retrievedCustomer = new Customer(customer.getIdCustomer(), new CPF(customer.getDocumentNumber()), customer.getName(), customer.geteMail());
+			customersSet.add(retrievedCustomer);
+		}
+		return customersSet;
 	}
 }

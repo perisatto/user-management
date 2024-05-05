@@ -1,5 +1,7 @@
 package com.perisatto.fiapprj.menuguru.application.port.in;
 
+import java.util.Set;
+
 import com.perisatto.fiapprj.menuguru.application.domain.model.Customer;
 
 public interface ManageCustomerUseCase {
@@ -13,4 +15,6 @@ public interface ManageCustomerUseCase {
 	Customer updateCustomer(Long customerId, String documentNumber, String customerName, String customerEmail) throws Exception;
 	
 	Boolean deleteCustomer(Long customerId) throws Exception;
+	
+	Set<Customer> findAllCustomers(Integer limit, Integer page) throws Exception;
 }
