@@ -16,7 +16,7 @@ public class Customer {
 	private CPF documentNumber;
 
 	public Customer(Long id, CPF documentNumber, String customerName, String customerEmail) throws Exception {
-		if(!validate(customerName, customerEmail, messageValidation)) {
+		if(!validate(customerName, customerEmail)) {
 			logger.warn("Error validating customer data");
 			throw new ValidationException("cstm-2001", messageValidation);
 		}
@@ -28,7 +28,7 @@ public class Customer {
 	}
 
 
-	private boolean validate(String customerName, String customerEmail, String message) {
+	private boolean validate(String customerName, String customerEmail) {
 		messageValidation = "Error validating customer data: ";
 		Boolean valid = true;
 		if((customerName == null) || (customerName.isEmpty()) || (customerName.isBlank())) {

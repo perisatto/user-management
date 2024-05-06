@@ -42,18 +42,9 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 	protected ResponseEntity<Object> handleMissingServletRequestParameter(MissingServletRequestParameterException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
 		String resourcePath = requestProperties.getProperty("resourcePath");
 		String title = "Bad request";
-		String detail = ex.getMessage();
+		String detail = "Malformed request or unknown fields";
 		String instance = resourcePath;
 		return buildResponseEntity(new HttpErrorHandler(title, detail, instance), HttpStatus.BAD_REQUEST);
-	}
-	
-	@Override
-	protected ResponseEntity<Object> handleHttpMediaTypeNotAcceptable(HttpMediaTypeNotAcceptableException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-		String resourcePath = requestProperties.getProperty("resourcePath");
-		String title = "Not acceptable";
-		String detail = ex.getMessage();
-		String instance = resourcePath;
-		return buildResponseEntity(new HttpErrorHandler(title, detail, instance), HttpStatus.NOT_ACCEPTABLE);
 	}
 	
 	@Override

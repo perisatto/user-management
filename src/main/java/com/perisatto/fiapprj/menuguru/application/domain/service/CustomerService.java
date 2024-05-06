@@ -139,7 +139,7 @@ public class CustomerService implements ManageCustomerUseCase {
 	
 	private void validateFindAll(Integer limit, Integer page) throws Exception {
 		if (limit < 0 || limit > 50) {
-			String message = "Invalid limit parameter. Value must be greater than 0 and less than 50. Actual value: " + limit;
+			String message = "Invalid size parameter. Value must be greater than 0 and less than 50. Actual value: " + limit;
 			logger.debug("\"validateFindAll\" | limit validation: " + message);
 			throw new ValidationException("cstm-1006", message);			
 		}

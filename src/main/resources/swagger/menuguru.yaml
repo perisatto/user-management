@@ -1,0 +1,435 @@
+openapi: 3.0.3
+info:
+  title: MenuGuru - Application API
+  description: Fictitious order management system (MenuGuru) for restaurants as part of the evaluation work for the Postgraduate course in Software Architecture at FIAP. MenuGuru's main objective is to record and track the status of orders for restaurants, where the customer can place their order and track its status until pickup.
+  version: 1.0.0
+externalDocs:
+  description: Find out more about the project
+  url: https://github.com/perisatto/menuguru
+servers:
+  - url: /menuguru/v1
+tags:
+  - name: customers
+    description: Manage the customer register
+paths:
+  /customers:
+    post:
+      tags:
+        - customers
+      summary: Create new customer
+      description: Create a new customer 
+      operationId: createCustomer
+      requestBody:
+        description: Create a new customer        
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Customer'                    
+        required: true        
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+          headers: 
+            Location:
+              description: Location of the new customer register
+              schema:
+                type: string
+                example: /customers/1              
+        '400':
+            description: Bad request
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorTemplate'
+                example:
+                  type: about:blank
+                  tittle: Bad request
+                  detail: Malformed request or unknown fields
+                  instance: /customers
+        '406':
+            description: Not acceptable
+        '415':
+            description: Unsupported Media Type
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorTemplate'
+                example:
+                  type: about:blank
+                  tittle: Unsupported Media Type
+                  detail: Content-Type 'text/plain' is not supported
+                  instance: /customers
+        '422':
+            description: Unprocessable entity
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorTemplate'
+                example:
+                  type: about:blank
+                  tittle: Unprocessable entity
+                  detail: Invalid document number
+                  instance: /customers
+        '500':
+            description: Internal Server Error
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorTemplate'
+                example:
+                  type: about:blank
+                  tittle: Internal Server Error
+                  detail: A error ocurred during the operation. Please refer to application log for details
+                  instance: /customers
+    get:
+      tags:
+        - customers
+      summary: List customers
+      description: List all customers using pagination criteria
+      operationId: listCustomers
+      parameters: 
+        - name: _page
+          description: Defines the page number that will be retrieved
+          in: query
+          required: true
+          example: 1
+          schema:
+              $ref: '#/components/schemas/PageParameter'
+        - name: _size
+          description: Defines the page size (rows number) that will be retrieved
+          in: query
+          required: true
+          example: 50
+          schema:
+              $ref: '#/components/schemas/SizeParameter'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageTemplate'
+                  - type: object
+                    properties:
+                      _content:
+                        description: Itens retrieved. If there is no item the list will be empty
+                        type: array
+                        items:
+                          allOf:
+                          - $ref: '#/components/schemas/Customer'
+        '400':
+            description: Bad request
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorTemplate'
+                example:
+                  type: about:blank
+                  tittle: Bad request
+                  detail: Malformed request or unknown fields
+                  instance: /customers
+        '406':
+            description: Not acceptable
+        '415':
+            description: Unsupported Media Type
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorTemplate'
+                example:
+                  type: about:blank
+                  tittle: Unsupported Media Type
+                  detail: Content-Type 'text/plain' is not supported
+                  instance: /customers
+        '422':
+            description: Unprocessable entity
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorTemplate'
+                example:
+                  type: about:blank
+                  tittle: Unprocessable entity
+                  detail: 'Invalid size parameter. Value must be greater than 0 and less than 50. Actual value: 51'
+                  instance: /customers
+        '500':
+            description: Internal Server Error
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorTemplate'
+                example:
+                  type: about:blank
+                  tittle: Internal Server Error
+                  detail: A error ocurred during the operation. Please refer to application log for details
+                  instance: /customers      
+  /customers/{customerId}:
+    get:
+      tags:
+        - customers
+      summary: Get customer
+      description: Retrieve a specific customer according with id
+      operationId: getCustomer
+      parameters: 
+        - name: customerId
+          description: Unique key that identifies the customer
+          in: path
+          required: true
+          example: 1
+          schema:
+              type: integer
+              minumum: 1
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+        '400':
+            description: Bad request
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorTemplate'
+                example:
+                  type: about:blank
+                  tittle: Bad request
+                  detail: Malformed request or unknown fields
+                  instance: /customers
+        '404':
+            description: Resource not found
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorTemplate'
+                example:
+                  type: about:blank
+                  tittle: Resource not found
+                  detail: Customer not found
+                  instance: /customers/2
+        '406':
+            description: Not acceptable
+        '415':
+            description: Unsupported Media Type
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorTemplate'
+                example:
+                  type: about:blank
+                  tittle: Unsupported Media Type
+                  detail: Content-Type 'text/plain' is not supported
+                  instance: /customers
+        '500':
+            description: Internal Server Error
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorTemplate'
+                example:
+                  type: about:blank
+                  tittle: Internal Server Error
+                  detail: A error ocurred during the operation. Please refer to application log for details
+                  instance: /customers
+    delete:
+      tags:
+        - customers
+      summary: Delete customer
+      description: Delete a specific customer according with id. The operation can't be undone
+      operationId: deleteCustomer
+      parameters: 
+        - name: customerId
+          description: Unique key that identifies the customer
+          in: path
+          required: true
+          example: 1
+          schema:
+              type: integer
+              minumum: 1
+      responses:
+        '204':
+          description: No content
+        '404':
+            description: Resource not found
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorTemplate'
+                example:
+                  type: about:blank
+                  tittle: Resource not found
+                  detail: Customer not found
+                  instance: /customers/2
+        '406':
+            description: Not acceptable
+        '415':
+            description: Unsupported Media Type
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorTemplate'
+                example:
+                  type: about:blank
+                  tittle: Unsupported Media Type
+                  detail: Content-Type 'text/plain' is not supported
+                  instance: /customers
+        '500':
+            description: Internal Server Error
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorTemplate'
+                example:
+                  type: about:blank
+                  tittle: Internal Server Error
+                  detail: A error ocurred during the operation. Please refer to application log for details
+                  instance: /customers
+  /customersByCPF/{documentNumber}:
+    get:
+      tags:
+        - customers
+      summary: Get customer by document number (a.k.a CPF)
+      description: Retrieve a specific customer according with document number
+      operationId: getCustomerByCpf
+      parameters: 
+        - name: documentNumber
+          description: Document that identifies the customer, a.k.a 'CPF'. Only numbers including leading zeros.
+          in: path
+          required: true
+          example: 05710894028
+          schema:
+              type: string
+              minLength: 11
+              maxLength: 11
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+        '400':
+            description: Bad request
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorTemplate'
+                example:
+                  type: about:blank
+                  tittle: Bad request
+                  detail: Malformed request or unknown fields
+                  instance: /customers
+        '404':
+            description: Resource not found
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorTemplate'
+                example:
+                  type: about:blank
+                  tittle: Resource not found
+                  detail: Customer not found
+                  instance: /customers/2
+        '406':
+            description: Not acceptable
+        '415':
+            description: Unsupported Media Type
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorTemplate'
+                example:
+                  type: about:blank
+                  tittle: Unsupported Media Type
+                  detail: Content-Type 'text/plain' is not supported
+                  instance: /customers
+        '500':
+            description: Internal Server Error
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorTemplate'
+                example:
+                  type: about:blank
+                  tittle: Internal Server Error
+                  detail: A error ocurred during the operation. Please refer to application log for details
+                  instance: /customers                  
+components:
+  schemas:
+    Customer:
+      type: object
+      description: A person that consumes products in the restaurant
+      properties:
+        id:
+          description: Unique key that identifies the customer
+          type: integer
+          format: int64
+          example: 10
+          readOnly: true
+        documentNumber:
+          description: Document that identifies the customer, a.k.a 'CPF'. Only numbers including leading zeros.
+          type: string
+          minLength: 11
+          maxLength: 11
+          example: '05710894028'          
+        name:
+          descrition: Word or expression that designates someone. Must be the full name (name and surname)
+          type: string
+          minLength: 1
+          maxLength: 100
+          example: Peter Parker
+        email:
+          description: Electronic mail address that are used to communicate with the customer.
+          type: string
+          minLength: 1
+          maxLength: 100
+          pattern: ^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$
+          example: peter.parker@avengers.com
+    PageParameter:
+      type: integer
+      minimum: 1
+    SizeParameter:
+      type: integer
+      minimum: 1
+      maximum: 50
+    PageTemplate:
+      type: object
+      properties:
+          _page:
+              type: integer
+              description: Actual page retrieved
+              example: 1
+          _size:
+              type: integer
+              descriptio: Page size (rows number) requested
+              example: 50
+          _pageElements:
+              type: integer
+              description: Actual page size (rows number) retrieved
+              example: 1
+    ErrorTemplate:
+      descritpion: Problem detail objects acording to [RFC9457](https://www.rfc-editor.org/rfc/rfc9457)
+      type: object
+      properties:
+        type:
+          type: string
+          description: Containing a URI reference that identifies the problem type. When this member is not present, its value is assumed to be "about:blank".
+          example: https://example.net/validation-error
+        tittle:
+          type: string
+          description: Contain a short, human-readable summary of the problem type.
+          example: Your request is not valid
+        detail:
+            type: string
+            description: A human-readable explanation specific to this occurrence of the problem.
+            example: Customer name must be not greater than 100 characters.
+        instance: 
+            type: string
+            description: String containing a URI reference that identifies the specific occurrence of the problem
+            example: /customers/1
