@@ -9,8 +9,11 @@ import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import com.perisatto.fiapprj.menuguru.application.domain.service.CustomerService;
+import com.perisatto.fiapprj.menuguru.application.domain.service.ProductService;
 import com.perisatto.fiapprj.menuguru.application.port.in.ManageCustomerUseCase;
+import com.perisatto.fiapprj.menuguru.application.port.in.ManageProductUseCase;
 import com.perisatto.fiapprj.menuguru.application.port.out.ManageCustomerPort;
+import com.perisatto.fiapprj.menuguru.application.port.out.ManageProductPort;
 
 @Configuration
 public class MenuguruConfig {
@@ -33,5 +36,10 @@ public class MenuguruConfig {
 	@Bean
 	ManageCustomerUseCase manageCustomerUseCase(ManageCustomerPort manageCustomerPort) {
 		return new CustomerService(manageCustomerPort);
+	}
+	
+	@Bean
+	ManageProductUseCase manageProductUseCase(ManageProductPort manageProductPort) {
+		return new ProductService(manageProductPort);
 	}
 }

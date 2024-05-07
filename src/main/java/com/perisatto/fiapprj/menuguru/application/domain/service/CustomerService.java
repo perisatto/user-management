@@ -1,15 +1,11 @@
 package com.perisatto.fiapprj.menuguru.application.domain.service;
 
-import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.data.domain.Page;
 
-import com.perisatto.fiapprj.menuguru.adapter.out.CustomerJpaEntity;
 import com.perisatto.fiapprj.menuguru.application.domain.model.CPF;
 import com.perisatto.fiapprj.menuguru.application.domain.model.Customer;
 import com.perisatto.fiapprj.menuguru.application.port.in.ManageCustomerUseCase;

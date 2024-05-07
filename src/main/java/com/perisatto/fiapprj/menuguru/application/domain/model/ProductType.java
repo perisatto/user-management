@@ -1,18 +1,22 @@
 package com.perisatto.fiapprj.menuguru.application.domain.model;
 
 public enum ProductType {
-	LANCHE(1),
-	ACOMPANHAMENTO(2),
-	BEBIDA(3),
-	SOBREMESA(4);
+	LANCHE(1L),
+	ACOMPANHAMENTO(2L),
+	BEBIDA(3L),
+	SOBREMESA(4L);
 	
-	private Integer id;
+	private Long id;
 
-	ProductType(Integer id) {
+	ProductType(Long id) {
 		this.id = id;
 	}
 
-	public Integer getId() {
+	public Long getId() {
 		return id;
+	}
+	
+	public void setId(Long id) {
+		this.id = id;
 	}
 }
