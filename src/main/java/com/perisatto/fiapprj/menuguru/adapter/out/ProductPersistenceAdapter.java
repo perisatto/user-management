@@ -1,11 +1,18 @@
 package com.perisatto.fiapprj.menuguru.adapter.out;
 
+import java.util.Base64;
+import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import com.perisatto.fiapprj.menuguru.application.domain.model.Product;
+import com.perisatto.fiapprj.menuguru.application.domain.model.ProductType;
 import com.perisatto.fiapprj.menuguru.application.port.out.ManageProductPort;
 
 @Component
@@ -29,8 +36,17 @@ public class ProductPersistenceAdapter implements ManageProductPort {
 
 	@Override
 	public Optional<Product> getProductById(Long id) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		Product product;
+
+		Optional<ProductJpaEntity> productJpaEntity = productRepository.findById(id);
+		if(productJpaEntity.isPresent()) {
+			ProductMapper productMapper = new ProductMapper();				
+			product = productMapper.mapToDomainEntity(productJpaEntity.get());
+		}else {
+			return Optional.empty();
+		}
+
+		return Optional.of(product);
 	}
 
 	@Override
@@ -47,8 +63,17 @@ public class ProductPersistenceAdapter implements ManageProductPort {
 
 	@Override
 	public Set<Product> findAll(Integer limit, Integer offset) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		Pageable pageable = PageRequest.of(offset, limit, Sort.by("idProduct"));
+		Page<ProductJpaEntity> products = productRepository.findAll(pageable);
+		Set<Product> productSet = new LinkedHashSet<Product>();
+		
+		for (ProductJpaEntity product : products) {
+			String base64Image = Base64.getEncoder().encodeToString(product.getImage());
+			Product retrievedProduct = new Product(product.getName(), ProductType.values()[(int) (product.getIdProductType() - 1)], product.getDescription(), product.getPrice(), base64Image);
+			retrievedProduct.setId(product.getIdProduct());
+			productSet.add(retrievedProduct);
+		}
+		return productSet;
 	}
 
 }

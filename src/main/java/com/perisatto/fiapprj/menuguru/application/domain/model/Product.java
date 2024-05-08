@@ -24,7 +24,7 @@ public class Product {
 	private String messageValidation;
 
 	public Product(String name, ProductType type, String description, Double price, String image) throws Exception {
-		if(!validate(name, description, price, image)) {
+		if(!validate(name, type, description, price, image)) {
 			logger.warn(messageValidation);
 			throw new ValidationException("prdt-1001", messageValidation);
 		}
@@ -36,13 +36,19 @@ public class Product {
 		this.image = image;		
 	}
 
-	private boolean validate(String name, String description, Double price, String image) {
+	private boolean validate(String name, ProductType type, String description, Double price, String image) {
 		messageValidation = "Error validating product data: ";		
 		Boolean valid = true;
 
 		if ((name == null) || (name.isEmpty()) || (name.isBlank())) {
 			logger.debug("Error validating product data: null or equals zero price");
 			messageValidation = messageValidation + "empty, null or blank name |";
+			valid = false;			
+		}
+		
+		if (type == null) {
+			logger.debug("Error validating product data: null type");
+			messageValidation = messageValidation + "blank type |";
 			valid = false;			
 		}
 

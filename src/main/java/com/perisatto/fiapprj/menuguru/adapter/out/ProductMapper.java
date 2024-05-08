@@ -8,7 +8,7 @@ import com.perisatto.fiapprj.menuguru.application.domain.model.ProductType;
 public class ProductMapper {	
 	Product mapToDomainEntity(ProductJpaEntity product) throws Exception {
 		String base64Image = Base64.getEncoder().encodeToString(product.getImage());		
-		Product productDomainEntity = new Product(product.getName(), ProductType.values()[(int) (product.getIdProduct() - 1)], product.getDescription(), product.getPrice(), base64Image);
+		Product productDomainEntity = new Product(product.getName(), ProductType.values()[(int) (product.getIdProductType() - 1)], product.getDescription(), product.getPrice(), base64Image);
 		productDomainEntity.setId(product.getIdProduct());
 		return productDomainEntity;
 	}
