@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
+import com.perisatto.fiapprj.menuguru.application.domain.model.Customer;
 import com.perisatto.fiapprj.menuguru.application.domain.model.Product;
 import com.perisatto.fiapprj.menuguru.application.domain.model.ProductType;
 import com.perisatto.fiapprj.menuguru.application.port.out.ManageProductPort;
@@ -32,6 +33,7 @@ public class ProductServiceTest {
 
 		@Override
 		public Optional<Product> getProductById(Long id) throws Exception {
+			if(id==10L) {
 			String productName = "X-Bacon";
 			ProductType productType = ProductType.LANCHE;
 			String productDescription = "O x-bacon é um sanduíche irresistível que une o sabor intenso do bacon crocante com queijo derretido"
@@ -44,17 +46,24 @@ public class ProductServiceTest {
 			product.setId(10L);
 
 			return Optional.of(product);
+			} else {
+				return Optional.empty();
+			}
 		}
 
 		@Override
-		public Set<Product> findAll(Integer limit, Integer offset) throws Exception {
+		public Set<Product> findAll(Integer limit, Integer offset, String type) throws Exception {
 			// TODO Auto-generated method stub
 			return null;
 		}
 
 		@Override
 		public Boolean deleteProduct(Long id) throws Exception {
-			return true;
+			if(id == 10L) {
+				return true;
+			} else {
+				throw new NotFoundException(null, "Product not found");
+			}
 		}
 
 		@Override
@@ -64,6 +73,7 @@ public class ProductServiceTest {
 			return newProduct;
 		}
 	};
+
 
 	@Test
 	void givenValidProduct_thenRegisterProduct() throws Exception {		
@@ -305,18 +315,240 @@ public class ProductServiceTest {
 		assertThat(product.getPrice()).isEqualTo(productPrice);
 		assertThat(product.getImage()).isEqualTo(productImage);
 	}
-	
+
 	@Test
 	void givenInvalidId_thenRetrieveProduct () throws Exception{
 		Long productId = 20L;
 		ProductService productService = new ProductService(manageProductPort);
-		
+
 		try {
 			Product product = productService.getProduct(productId);
-			
+
 			assertThat(product.getId()).isGreaterThan(0);
 		} catch (Exception e) {
 			assertThatExceptionOfType(NotFoundException.class);
 		}
 	}
+
+	@Test
+	void givenId_thenDeleteProduct () {
+		ProductService productService = new ProductService(manageProductPort);
+		Boolean deleted = false;
+
+		try {
+			Long productId = 10L;
+			deleted = productService.deleteProduct(productId);
+			Product product = productService.getProduct(productId);
+		} catch (NotFoundException e) {
+			assertThat(deleted).isTrue();
+		} catch (Exception e) {
+			assertThatExceptionOfType(Exception.class);
+		}
+	}
+
+	@Test
+	void givenInexistentId_thenRefusesDeleteCustomer () {
+		ProductService productService = new ProductService(manageProductPort);
+		Boolean deleted = false;
+
+		try {
+			Long productId = 20L;
+			deleted = productService.deleteProduct(productId);
+			Product product = productService.getProduct(productId);
+		} catch (NotFoundException e) {
+			assertThatExceptionOfType(NotFoundException.class);
+		} catch (Exception e) {
+			assertThatExceptionOfType(Exception.class);
+		}
+	}
+	
+	@Test
+	void givenNewName_thenUpdateName() {
+		Long productId = 10L;
+		String productName = "X-Salad";
+		String productType = "LANCHE";
+		String productDescription = "O x-bacon é um sanduíche irresistível que une o sabor intenso do bacon crocante com queijo derretido"
+				+ ", alface, tomate e um suculento hambúrguer, tudo envolto em um pão macio e tostado. "
+				+ "Uma explosão de sabores em cada mordida!";
+		Double productPrice = 35.50;
+		String productImage = base64ProductImage;
+		
+		ProductService productService = new ProductService(manageProductPort);
+		
+		try {
+		
+		Optional<Product> product = manageProductPort.getProductById(productId);
+		
+		Product productToUpdate = new Product(productName, ProductType.valueOf(productType), productDescription, productPrice, productImage);
+		productToUpdate.setId(productId);
+		
+		Optional<Product> updatedProduct = manageProductPort.updateProduct(productToUpdate);
+		
+		assertThat(updatedProduct.get().getId()).isEqualTo(product.get().getId());
+		assertThat(updatedProduct.get().getName()).isEqualTo(productName);
+		assertThat(updatedProduct.get().getProductType()).isEqualTo(product.get().getProductType());
+		assertThat(updatedProduct.get().getDescription()).isEqualTo(product.get().getDescription());
+		assertThat(updatedProduct.get().getPrice()).isEqualTo(product.get().getPrice());
+		assertThat(updatedProduct.get().getImage()).isEqualTo(product.get().getImage());
+		
+		}catch (Exception e) {
+			assertThatExceptionOfType(NotFoundException.class);
+		}
+		
+	}
+	
+	@Test
+	void givenInvalidName_thenRefusesUpdateName() {
+		Long productId = 10L;
+		String productName = "";
+		String productType = "LANCHE";
+		String productDescription = "O x-bacon é um sanduíche irresistível que une o sabor intenso do bacon crocante com queijo derretido"
+				+ ", alface, tomate e um suculento hambúrguer, tudo envolto em um pão macio e tostado. "
+				+ "Uma explosão de sabores em cada mordida!";
+		Double productPrice = 35.50;
+		String productImage = base64ProductImage;
+		
+		ProductService productService = new ProductService(manageProductPort);
+		
+		try {
+		
+		Optional<Product> product = manageProductPort.getProductById(productId);
+		
+		Product productToUpdate = new Product(productName, ProductType.valueOf(productType), productDescription, productPrice, productImage);
+		
+		Optional<Product> updatedProduct = manageProductPort.updateProduct(productToUpdate);
+				
+		}catch (Exception e) {
+			assertThatExceptionOfType(ValidationException.class);
+		}
+	}
+	
+	@Test
+	void givenInvalidType_thenRefusesUpdateName() {
+		Long productId = 10L;
+		String productName = "X-Salad";
+		String productType = "";
+		String productDescription = "O x-bacon é um sanduíche irresistível que une o sabor intenso do bacon crocante com queijo derretido"
+				+ ", alface, tomate e um suculento hambúrguer, tudo envolto em um pão macio e tostado. "
+				+ "Uma explosão de sabores em cada mordida!";
+		Double productPrice = 35.50;
+		String productImage = base64ProductImage;
+		
+		ProductService productService = new ProductService(manageProductPort);
+		
+		try {
+		
+		Optional<Product> product = manageProductPort.getProductById(productId);
+		
+		Product productToUpdate = new Product(productName, ProductType.valueOf(productType), productDescription, productPrice, productImage);
+		
+		Optional<Product> updatedProduct = manageProductPort.updateProduct(productToUpdate);
+				
+		}catch (Exception e) {
+			assertThatExceptionOfType(ValidationException.class);
+		}
+	}
+	
+	@Test
+	void givenInvalidDescription_thenRefusesUpdateName() {
+		Long productId = 10L;
+		String productName = "X-Salad";
+		String productType = "LANCHE";
+		String productDescription = "";
+		Double productPrice = 35.50;
+		String productImage = base64ProductImage;
+		
+		ProductService productService = new ProductService(manageProductPort);
+		
+		try {
+		
+		Optional<Product> product = manageProductPort.getProductById(productId);
+		
+		Product productToUpdate = new Product(productName, ProductType.valueOf(productType), productDescription, productPrice, productImage);
+		
+		Optional<Product> updatedProduct = manageProductPort.updateProduct(productToUpdate);
+				
+		}catch (Exception e) {
+			assertThatExceptionOfType(ValidationException.class);
+		}
+	}
+	
+	@Test
+	void givenInvalidPrice_thenRefusesUpdateName() {
+		Long productId = 10L;
+		String productName = "X-Salad";
+		String productType = "LANCHE";
+		String productDescription = "O x-bacon é um sanduíche irresistível que une o sabor intenso do bacon crocante com queijo derretido"
+				+ ", alface, tomate e um suculento hambúrguer, tudo envolto em um pão macio e tostado. "
+				+ "Uma explosão de sabores em cada mordida!";
+		Double productPrice = 0.0;
+		String productImage = base64ProductImage;
+		
+		ProductService productService = new ProductService(manageProductPort);
+		
+		try {
+		
+		Optional<Product> product = manageProductPort.getProductById(productId);
+		
+		Product productToUpdate = new Product(productName, ProductType.valueOf(productType), productDescription, productPrice, productImage);
+		
+		Optional<Product> updatedProduct = manageProductPort.updateProduct(productToUpdate);
+				
+		}catch (Exception e) {
+			assertThatExceptionOfType(ValidationException.class);
+		}
+	}
+	
+	@Test
+	void givenInvalidImage_thenRefusesUpdateName() {
+		Long productId = 10L;
+		String productName = "X-Salad";
+		String productType = "";
+		String productDescription = "O x-bacon é um sanduíche irresistível que une o sabor intenso do bacon crocante com queijo derretido"
+				+ ", alface, tomate e um suculento hambúrguer, tudo envolto em um pão macio e tostado. "
+				+ "Uma explosão de sabores em cada mordida!";
+		Double productPrice = 35.50;
+		String productImage = invalidBase64ProductImage;
+		
+		ProductService productService = new ProductService(manageProductPort);
+		
+		try {
+		
+		Optional<Product> product = manageProductPort.getProductById(productId);
+		
+		Product productToUpdate = new Product(productName, ProductType.valueOf(productType), productDescription, productPrice, productImage);
+		
+		Optional<Product> updatedProduct = manageProductPort.updateProduct(productToUpdate);
+				
+		}catch (Exception e) {
+			assertThatExceptionOfType(ValidationException.class);
+		}
+	}
+	
+	@Test
+	void givenInexistentId_thenRefusesUpdateName() {
+		Long productId = 20L;
+		String productName = "X-Salad";
+		String productType = "";
+		String productDescription = "O x-bacon é um sanduíche irresistível que une o sabor intenso do bacon crocante com queijo derretido"
+				+ ", alface, tomate e um suculento hambúrguer, tudo envolto em um pão macio e tostado. "
+				+ "Uma explosão de sabores em cada mordida!";
+		Double productPrice = 35.50;
+		String productImage = base64ProductImage;
+		
+		ProductService productService = new ProductService(manageProductPort);
+		
+		try {
+		
+		Optional<Product> product = manageProductPort.getProductById(productId);
+		
+		Product productToUpdate = new Product(productName, ProductType.valueOf(productType), productDescription, productPrice, productImage);
+		
+		Optional<Product> updatedProduct = manageProductPort.updateProduct(productToUpdate);
+				
+		}catch (Exception e) {
+			assertThatExceptionOfType(NotFoundException.class);
+		}
+	}
 }
+

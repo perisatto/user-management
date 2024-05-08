@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,8 +21,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.perisatto.fiapprj.menuguru.adapter.in.dto.CreateProductRequestDTO;
 import com.perisatto.fiapprj.menuguru.adapter.in.dto.CreateProductResponseDTO;
+import com.perisatto.fiapprj.menuguru.adapter.in.dto.GetCustomerResponseDTO;
 import com.perisatto.fiapprj.menuguru.adapter.in.dto.GetProductListResponseDTO;
 import com.perisatto.fiapprj.menuguru.adapter.in.dto.GetProductResponseDTO;
+import com.perisatto.fiapprj.menuguru.adapter.in.dto.UpdateCustomerRequestDTO;
+import com.perisatto.fiapprj.menuguru.adapter.in.dto.UpdateProductRequestDTO;
+import com.perisatto.fiapprj.menuguru.application.domain.model.Customer;
 import com.perisatto.fiapprj.menuguru.application.domain.model.Product;
 import com.perisatto.fiapprj.menuguru.application.port.in.ManageProductUseCase;
 
@@ -47,9 +53,10 @@ public class ProductController {
 	}
 	
 	@GetMapping(value = "/products", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<GetProductListResponseDTO> getAll(@RequestParam(value = "_page", required = true) Integer page, @RequestParam(value = "_size", required = true) Integer size) throws Exception {
+	public ResponseEntity<GetProductListResponseDTO> getAll(@RequestParam(value = "_page", required = true) Integer page, 
+			@RequestParam(value = "_size", required = true) Integer size, @RequestParam(value = "type", required=false) String type) throws Exception {
 		requestProperties.setProperty("resourcePath", "/products");
-		Set<Product> product = manageProductUseCase.findAllProducts(size, page);
+		Set<Product> product = manageProductUseCase.findAllProducts(size, page, type);
 		GetProductListResponseDTO response = new GetProductListResponseDTO();
 		response.setContent(product, page, size);		
 		return ResponseEntity.status(HttpStatus.OK).body(response);
@@ -64,5 +71,20 @@ public class ProductController {
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 	
-
+	@DeleteMapping(value = "/products/{productId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> delete(@PathVariable(value = "productId") Long productId) throws Exception {
+		requestProperties.setProperty("resourcePath", "/products/" + productId.toString());			
+		manageProductUseCase.deleteProduct(productId);
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+	}
+	
+	@PatchMapping(value = "/products/{productId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<GetProductResponseDTO> patch(@PathVariable(value = "productId") Long productId, @RequestBody UpdateProductRequestDTO updateRequest) throws Exception {
+		requestProperties.setProperty("resourcePath", "/products/" + productId.toString());			
+		Product product = manageProductUseCase.updateProduct(productId, updateRequest.getName(), updateRequest.getProductType(), 
+				updateRequest.getDescription(), updateRequest.getPrice(), updateRequest.getImage());
+		ModelMapper productMapper = new ModelMapper();
+		GetProductResponseDTO response = productMapper.map(product, GetProductResponseDTO.class);
+		return ResponseEntity.status(HttpStatus.OK).body(response);
+	}
 }

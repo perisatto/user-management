@@ -14,5 +14,5 @@ public interface ManageProductPort {
 	
 	Boolean deleteProduct(Long id) throws Exception;
 
-	Set<Product> findAll(Integer limit, Integer offset) throws Exception;
+	Set<Product> findAll(Integer limit, Integer offset, String type) throws Exception;
 }
