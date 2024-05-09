@@ -4,16 +4,13 @@ import java.util.Base64;
 import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Predicate;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Component;
 
-import com.perisatto.fiapprj.menuguru.application.domain.model.Customer;
 import com.perisatto.fiapprj.menuguru.application.domain.model.Product;
 import com.perisatto.fiapprj.menuguru.application.domain.model.ProductType;
 import com.perisatto.fiapprj.menuguru.application.port.out.ManageProductPort;
@@ -28,9 +25,10 @@ public class ProductPersistenceAdapter implements ManageProductPort {
 	}
 
 	@Override
-	public Product createProduct(Product product) throws Exception {
+	public Product createProduct(Product product) throws Exception {		
 		ProductMapper productMapper = new ProductMapper();
 		ProductJpaEntity productJpaEntity =  productMapper.mapToJpaEntity(product);
+		productJpaEntity.setIdProductStatus(1L);
 		productJpaEntity = productRepository.save(productJpaEntity);
 		Product newProduct;
 		newProduct = productMapper.mapToDomainEntity(productJpaEntity);
@@ -41,7 +39,7 @@ public class ProductPersistenceAdapter implements ManageProductPort {
 	public Optional<Product> getProductById(Long id) throws Exception {
 		Product product;
 
-		Optional<ProductJpaEntity> productJpaEntity = productRepository.findById(id);
+		Optional<ProductJpaEntity> productJpaEntity = productRepository.findByIdProductAndIdProductStatus(id, 1L);
 		if(productJpaEntity.isPresent()) {
 			ProductMapper productMapper = new ProductMapper();				
 			product = productMapper.mapToDomainEntity(productJpaEntity.get());
@@ -56,6 +54,7 @@ public class ProductPersistenceAdapter implements ManageProductPort {
 	public Optional<Product> updateProduct(Product product) throws Exception {
 		ProductMapper productMapper = new ProductMapper();
 		ProductJpaEntity productJpaEntity = productMapper.mapToJpaEntity(product);
+		productJpaEntity.setIdProductStatus(1L);
 		productJpaEntity = productRepository.save(productJpaEntity);
 		Product updatedProduct = productMapper.mapToDomainEntity(productJpaEntity);
 		return Optional.of(updatedProduct);
@@ -63,8 +62,14 @@ public class ProductPersistenceAdapter implements ManageProductPort {
 
 	@Override
 	public Boolean deleteProduct(Long id) throws Exception {
-		productRepository.deleteById(id);
-		return true;
+		Optional<ProductJpaEntity> product = productRepository.findById(id);
+		if(product.isPresent()) {
+			product.get().setIdProductStatus(2L);
+			productRepository.save(product.get());
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	@Override
@@ -77,9 +82,9 @@ public class ProductPersistenceAdapter implements ManageProductPort {
 		
 		if(type != null) {		
 			productType = ProductType.valueOf(type);
-			products = productRepository.findByIdProductType(productType.getId(), pageable);
+			products = productRepository.findByIdProductTypeAndIdProductStatus(productType.getId(), 1L, pageable);
 		} else {
-			products = productRepository.findAll(pageable);
+			products = productRepository.findByIdProductStatus(1L, pageable);
 		}
 		
 		Set<Product> productSet = new LinkedHashSet<Product>();

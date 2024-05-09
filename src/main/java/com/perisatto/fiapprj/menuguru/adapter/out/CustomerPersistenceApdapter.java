@@ -26,7 +26,7 @@ public class CustomerPersistenceApdapter implements ManageCustomerPort {
 	public Optional<Customer> getCustomerByCPF(CPF customerDocument) throws Exception {
 		Customer customer;
 
-		Optional<CustomerJpaEntity> customerJpaEntity = customerRepository.findByDocumentNumber(customerDocument.getDocumentNumber());
+		Optional<CustomerJpaEntity> customerJpaEntity = customerRepository.findByDocumentNumberAndIdCustomerStatus(customerDocument.getDocumentNumber(), 1L);
 		if(customerJpaEntity.isPresent()) {
 			CustomerMapper customerMapper = new CustomerMapper();				
 			customer = customerMapper.mapToDomainEntity(customerJpaEntity.get());
@@ -40,7 +40,7 @@ public class CustomerPersistenceApdapter implements ManageCustomerPort {
 	public Optional<Customer> getCustomerById(Long customerId) throws Exception{
 		Customer customer;
 
-		Optional<CustomerJpaEntity> customerJpaEntity = customerRepository.findById(customerId);
+		Optional<CustomerJpaEntity> customerJpaEntity = customerRepository.findByIdCustomerAndIdCustomerStatus(customerId, 1L);
 		if(customerJpaEntity.isPresent()) {
 			CustomerMapper customerMapper = new CustomerMapper();				
 			customer = customerMapper.mapToDomainEntity(customerJpaEntity.get());
@@ -55,6 +55,7 @@ public class CustomerPersistenceApdapter implements ManageCustomerPort {
 	public Customer createCustomer(Customer customer) throws Exception {
 		CustomerMapper customerMapper = new CustomerMapper();
 		CustomerJpaEntity customerJpaEntity =  customerMapper.mapToJpaEntity(customer);
+		customerJpaEntity.setIdCustomerStatus(1L);
 		customerJpaEntity = customerRepository.save(customerJpaEntity);
 		Customer newCustomer;
 		newCustomer = customerMapper.mapToDomainEntity(customerJpaEntity);
@@ -65,6 +66,7 @@ public class CustomerPersistenceApdapter implements ManageCustomerPort {
 	public Optional<Customer> updateCustomer(Customer customer) throws Exception {
 		CustomerMapper customerMapper = new CustomerMapper();
 		CustomerJpaEntity customerJpaEntity = customerMapper.mapToJpaEntity(customer);
+		customerJpaEntity.setIdCustomerStatus(1L);
 		customerJpaEntity = customerRepository.save(customerJpaEntity);
 		Customer updatedCustomer = customerMapper.mapToDomainEntity(customerJpaEntity);
 		return Optional.of(updatedCustomer);
@@ -72,14 +74,20 @@ public class CustomerPersistenceApdapter implements ManageCustomerPort {
 
 	@Override
 	public Boolean deleteCustomer(Long customerId) throws Exception {
-		customerRepository.deleteById(customerId);
-		return null;
+		Optional<CustomerJpaEntity> customer = customerRepository.findById(customerId);
+		if(customer.isPresent()) {
+			customer.get().setIdCustomerStatus(2L);
+			customerRepository.save(customer.get());
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	@Override
 	public Set<Customer> findAll(Integer limit, Integer page) throws Exception {
 		Pageable pageable = PageRequest.of(page, limit, Sort.by("idCustomer"));
-		Page<CustomerJpaEntity> customers = customerRepository.findAll(pageable);
+		Page<CustomerJpaEntity> customers = customerRepository.findByIdCustomerStatus(1L, pageable);
 		Set<Customer> customersSet = new LinkedHashSet<Customer>();
 		
 		for (CustomerJpaEntity customer : customers) {

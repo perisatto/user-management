@@ -16,6 +16,7 @@ public class CustomerJpaEntity {
 	private String name;
 	private String documentNumber;
 	private String eMail;
+	private Long idCustomerStatus;
 	
 	
 	public Long getIdCustomer() {
@@ -48,5 +49,13 @@ public class CustomerJpaEntity {
 	
 	public void seteMail(String eMail) {
 		this.eMail = eMail;
+	}
+
+	public Long getIdCustomerStatus() {
+		return idCustomerStatus;
+	}
+
+	public void setIdCustomerStatus(Long idCustomerStatus) {
+		this.idCustomerStatus = idCustomerStatus;
 	}
 }

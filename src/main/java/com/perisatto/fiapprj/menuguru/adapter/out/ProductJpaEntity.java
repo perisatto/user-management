@@ -18,6 +18,7 @@ public class ProductJpaEntity {
 	private Long idProductType;
 	private String description;
 	private Double price;
+	private Long idProductStatus;
 	
 	@Lob
     @Column(name = "image", columnDefinition="BLOB")
@@ -69,5 +70,13 @@ public class ProductJpaEntity {
 
 	public void setImage(byte[] image) {
 		this.image = image;
+	}
+
+	public Long getIdProductStatus() {
+		return idProductStatus;
+	}
+
+	public void setIdProductStatus(Long idProductStatus) {
+		this.idProductStatus = idProductStatus;
 	}
 }
