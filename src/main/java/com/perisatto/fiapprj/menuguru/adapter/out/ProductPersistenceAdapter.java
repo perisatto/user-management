@@ -72,26 +72,23 @@ public class ProductPersistenceAdapter implements ManageProductPort {
 		
 		ProductType productType = null;
 		
+		Pageable pageable = PageRequest.of(offset, limit, Sort.by("idProduct"));
+		Page<ProductJpaEntity> products;
+		
 		if(type != null) {		
 			productType = ProductType.valueOf(type);
+			products = productRepository.findByIdProductType(productType.getId(), pageable);
+		} else {
+			products = productRepository.findAll(pageable);
 		}
 		
-		Pageable pageable = PageRequest.of(offset, limit, Sort.by("idProduct"));
-		Page<ProductJpaEntity> products = productRepository.findAll(pageable);
 		Set<Product> productSet = new LinkedHashSet<Product>();
 		
 		for (ProductJpaEntity product : products) {
 			String base64Image = Base64.getEncoder().encodeToString(product.getImage());
 			Product retrievedProduct = new Product(product.getName(), ProductType.values()[(int) (product.getIdProductType() - 1)], product.getDescription(), product.getPrice(), base64Image);
 			retrievedProduct.setId(product.getIdProduct());
-			
-			if(type==null) {
-				productSet.add(retrievedProduct);
-			} else {
-				if(retrievedProduct.getProductType()==productType) {
-					productSet.add(retrievedProduct);
-				}
-			}
+			productSet.add(retrievedProduct);
 		}
 		return productSet;
 	}

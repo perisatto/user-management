@@ -125,9 +125,20 @@ public class ProductService implements ManageProductUseCase{
 
 	@Override
 	public Set<Product> findAllProducts(Integer limit, Integer page, String type) throws Exception {
-		ProductType productType;
+
 		try {	
-			productType = ProductType.valueOf(type);
+			if(limit==null) {
+				limit = 10;
+			}
+
+			if(page==null) {
+				page = 1;
+			}
+
+			validateFindAll(limit, page);		
+
+			Set<Product> findResult = manageProductPort.findAll(limit, page - 1, type);		
+			return findResult;
 		} catch (IllegalArgumentException e) {
 			if(e.getMessage().contains("No enum constant")) {
 				throw new ValidationException("prdt-2007","Invalid product type");
@@ -139,19 +150,6 @@ public class ProductService implements ManageProductUseCase{
 			logger.info("Error creating a new product: "+ e.getMessage());
 			throw new ValidationException("prdt-2008","Invalid product type");
 		}
-
-		if(limit==null) {
-			limit = 10;
-		}
-
-		if(page==null) {
-			page = 1;
-		}
-
-		validateFindAll(limit, page);		
-
-		Set<Product> findResult = manageProductPort.findAll(limit, page - 1, type);		
-		return findResult;
 	}
 
 	private void validateFindAll(Integer limit, Integer page) throws Exception {
