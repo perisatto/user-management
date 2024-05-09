@@ -66,7 +66,7 @@ public class CustomerController {
 	}
 	
 	@GetMapping(value = "/customers", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<GetCustomerListResponseDTO> getAll(@RequestParam(value = "_page") Integer page, @RequestParam(value = "_size") Integer size) throws Exception {
+	public ResponseEntity<GetCustomerListResponseDTO> getAll(@RequestParam(value = "_page", required = true) Integer page, @RequestParam(value = "_size", required = true) Integer size) throws Exception {
 		requestProperties.setProperty("resourcePath", "/customers");
 		Set<Customer> customer = manageCustomerUseCase.findAllCustomers(size, page);
 		GetCustomerListResponseDTO response = new GetCustomerListResponseDTO();

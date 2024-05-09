@@ -3,7 +3,6 @@ package com.perisatto.fiapprj.menuguru.application.domain.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 

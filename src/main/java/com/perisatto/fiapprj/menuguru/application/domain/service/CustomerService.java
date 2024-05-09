@@ -1,15 +1,11 @@
 package com.perisatto.fiapprj.menuguru.application.domain.service;
 
-import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.data.domain.Page;
 
-import com.perisatto.fiapprj.menuguru.adapter.out.CustomerJpaEntity;
 import com.perisatto.fiapprj.menuguru.application.domain.model.CPF;
 import com.perisatto.fiapprj.menuguru.application.domain.model.Customer;
 import com.perisatto.fiapprj.menuguru.application.port.in.ManageCustomerUseCase;
@@ -139,7 +135,7 @@ public class CustomerService implements ManageCustomerUseCase {
 	
 	private void validateFindAll(Integer limit, Integer page) throws Exception {
 		if (limit < 0 || limit > 50) {
-			String message = "Invalid limit parameter. Value must be greater than 0 and less than 50. Actual value: " + limit;
+			String message = "Invalid size parameter. Value must be greater than 0 and less than 50. Actual value: " + limit;
 			logger.debug("\"validateFindAll\" | limit validation: " + message);
 			throw new ValidationException("cstm-1006", message);			
 		}
