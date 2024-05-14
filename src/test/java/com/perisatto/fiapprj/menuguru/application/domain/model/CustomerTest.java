@@ -3,10 +3,12 @@ package com.perisatto.fiapprj.menuguru.application.domain.model;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.test.context.ActiveProfiles;
 
 import com.perisatto.fiapprj.menuguru.customer.domain.model.CPF;
 import com.perisatto.fiapprj.menuguru.customer.domain.model.Customer;
 
+@ActiveProfiles(value = "test")
 public class CustomerTest {
 
 	@Test

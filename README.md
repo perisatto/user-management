@@ -13,14 +13,22 @@ Funcionalidades:
 
 ## Pré-Requisitos
 
-* JDK 22
-* este projeto utiliza Maven para gestão de pacotes e dependências.
+* JDK 22 ou mais recente (<https://jdk.java.net/>)
+* Apache Maven versão 3.9.6 ou versão mais recente (<https://maven.apache.org/download.cgi>).
+
+Certifique-se que a variável JAVA_HOME e M2_HOME estão apontadas corretamente para as versões indicadas/mais recentes.
 
 ## Execução 
 
-### Ambiente de Desenvolvimento
+### Preparação do ambiente
 
-### Docker
+Após realizar o download deste repositório, 
+
+> $mvn package
+
+O projeto será compilado e o executavel será gerado no diretório "/target". Após a execução do build
+
+
 
 ### Operações
 

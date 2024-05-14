@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.test.context.ActiveProfiles;
 
 import com.perisatto.fiapprj.menuguru.customer.domain.model.CPF;
 import com.perisatto.fiapprj.menuguru.customer.domain.model.Customer;
@@ -24,6 +25,7 @@ import com.perisatto.fiapprj.menuguru.order.port.out.OrderProductPort;
 import com.perisatto.fiapprj.menuguru.product.domain.model.Product;
 import com.perisatto.fiapprj.menuguru.product.domain.model.ProductType;
 
+@ActiveProfiles(value = "test")
 public class OrderServiceTest {
 
 	private OrderCustomerPort orderCustomerPort = new OrderCustomerPort() {
@@ -140,7 +142,7 @@ public class OrderServiceTest {
 		Order order = orderService.createOrder(customerId, orderItems);
 
 		assertThat(order.getId()).isGreaterThan(0);
-		assertThat(order.getStatus()).isEqualTo(OrderStatus.RECEBIDO);
+		assertThat(order.getStatus()).isEqualTo(OrderStatus.PENDENTE_PAGAMENTO);
 		assertThat(order.getTotalPrice()).isEqualTo(firstProductActualPrice + secondProductActualPrice);
 	}
 
@@ -166,7 +168,7 @@ public class OrderServiceTest {
 		Order order = orderService.createOrder(null, orderItems);
 
 		assertThat(order.getId()).isGreaterThan(0);
-		assertThat(order.getStatus()).isEqualTo(OrderStatus.RECEBIDO);
+		assertThat(order.getStatus()).isEqualTo(OrderStatus.PENDENTE_PAGAMENTO);
 		assertThat(order.getTotalPrice()).isEqualTo(firstProductActualPrice + secondProductActualPrice);		
 	}
 
