@@ -2,10 +2,10 @@ spring:
   application:
     name: menuguru
   profiles:
-    default: local
+    default: docker
   jackson:
     deserialization:
-      fail-on-unknown-properties: true
+      fail-on-unknown-properties: true     
 ---
 spring:
   config:
@@ -20,6 +20,22 @@ spring:
     password: ${MYSQL_PASSWORD}      
   jpa:
     hibernate:      naming:        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+---
+spring:
+  config:
+    activate:
+      on-profile:
+      - docker
+      
+  datasource:
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://mysql_db:3306/menuguru
+    username: ${MYSQL_USER}
+    password: ${MYSQL_PASSWORD}      
+  jpa:
+    hibernate:
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl        
 ---        
 spring:
   config:
