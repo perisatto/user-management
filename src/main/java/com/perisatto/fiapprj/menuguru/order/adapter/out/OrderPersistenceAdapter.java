@@ -87,7 +87,7 @@ public class OrderPersistenceAdapter implements ManageOrderPort{
 	@Override
 	public Set<Order> listPreparationQueue(Integer limit, Integer page) throws Exception {
 		Pageable pageable = PageRequest.of(page, limit, Sort.by("readyToPrepare"));
-		Page<OrderJpaEntity> orders = orderRepository.findByIdOrderStatusBetween(OrderStatus.RECEBIDO.getId(), OrderStatus.EM_PREPARACAO.getId(), pageable);
+		Page<OrderJpaEntity> orders = orderRepository.findByIdOrderStatusBetween(OrderStatus.RECEBIDO.getId(), OrderStatus.PRONTO.getId(), pageable);
 		
 		Set<Order> orderSet = new LinkedHashSet<Order>();
 		
