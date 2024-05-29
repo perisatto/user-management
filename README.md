@@ -10,16 +10,9 @@ Funcionalidades:
 * Gestão de Produtos (criação, consulta, edição e remoção)
 * Gestão de Pedidos (solicitação, consulta e finalização de pedidos)
 
-
-## Pré-Requisitos
-
-* JDK 22 ou mais recente (<https://jdk.java.net/>)
-* Apache Maven versão 3.9.6 ou versão mais recente (<https://maven.apache.org/download.cgi>).
-* Ambiente Docker
-
-Certifique-se que a variável JAVA_HOME e M2_HOME estão apontadas corretamente para as versões indicadas/mais recentes.
-
 ## Execução 
+
+>Para execução desta aplicação é necessário um ambiente Docker configurado.
 
 Após realizar o download deste repositório, entre na raiz do projeto e configure o arquivo de variáveis de ambiente com a senha a ser utilizada para o usuário root do banco de dados, substituindo "**password**" pela senha escolhida (o valor deve ser informado entre aspas):
 
