@@ -19,7 +19,7 @@ Após realizar o download deste repositório, entre na raiz do projeto e configu
     $echo MYSQL_ROOT_PASSWORD="password" >> .env
     $echo MYSQL_PASSWORD="password" >> .env
 
->Caso o arquivo .env já exista no diretório, será necessário apagá-lo caso queira configurar uma nova senha nas variáveis de ambiente conforme instruções acima.
+>Caso o arquivo .env já exista no diretório e você queira configurar uma nova senha para o banco de dados, será necessário apagá-lo antes de configurar as variáveis de ambiente conforme instruções acima.
 
 Com as variáveis de ambiente configuradas é hora de iniciar a aplicação utilizando Docker. Na raiz do projeto utilize o comando "docker-compose" para iniciar a aplicação:
 
