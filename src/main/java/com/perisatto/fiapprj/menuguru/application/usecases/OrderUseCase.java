@@ -5,18 +5,19 @@ import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.perisatto.fiapprj.menuguru.application.interfaces.CustomerRepository;
 import com.perisatto.fiapprj.menuguru.application.interfaces.OrderRepository;
+import com.perisatto.fiapprj.menuguru.application.interfaces.PaymentProcessor;
 import com.perisatto.fiapprj.menuguru.application.interfaces.ProductRepository;
 import com.perisatto.fiapprj.menuguru.domain.entities.customer.Customer;
 import com.perisatto.fiapprj.menuguru.domain.entities.order.Order;
 import com.perisatto.fiapprj.menuguru.domain.entities.order.OrderItem;
 import com.perisatto.fiapprj.menuguru.domain.entities.order.OrderStatus;
+import com.perisatto.fiapprj.menuguru.domain.entities.payment.Payment;
 import com.perisatto.fiapprj.menuguru.domain.entities.product.Product;
 import com.perisatto.fiapprj.menuguru.handler.exceptions.NotFoundException;
 import com.perisatto.fiapprj.menuguru.handler.exceptions.ValidationException;
@@ -27,11 +28,13 @@ public class OrderUseCase {
 	private final OrderRepository orderRepository;
 	private final CustomerRepository customerRepository;
 	private final ProductRepository productRepository;
+	private final PaymentProcessor paymentProcessor;
 
-	public OrderUseCase(OrderRepository orderRepository, CustomerRepository customerRepository, ProductRepository productRepository) {
+	public OrderUseCase(OrderRepository orderRepository, CustomerRepository customerRepository, ProductRepository productRepository, PaymentProcessor paymentProcessor) {
 		this.orderRepository = orderRepository;
 		this.customerRepository = customerRepository;
 		this.productRepository = productRepository;
+		this.paymentProcessor = paymentProcessor;
 	}
 
 	public Order createOrder(Long customerId, Set<OrderItem> orderItems) throws Exception {
@@ -61,7 +64,15 @@ public class OrderUseCase {
 
 		Order newOrder = new Order(OrderStatus.PENDENTE_PAGAMENTO, customerId, items);
 		newOrder = orderRepository.createOrder(newOrder);
-		logger.info("New order created.");
+		logger.info("New order created. Generating payment.");
+		
+		PaymentUseCase paymentUseCase = new PaymentUseCase(paymentProcessor);
+		Payment payment = paymentUseCase.createPayment(newOrder);
+		newOrder.setPaymentIdentifier(payment.getId());
+		newOrder.setPaymentLocation(payment.getPaymentLocation());
+		orderRepository.updateOrder(newOrder);
+		
+		logger.info("Payment generated.");
 		return newOrder;
 	}
 
@@ -140,7 +151,7 @@ public class OrderUseCase {
 		}
 	}
 
-	public Order checkoutOrder(Long id, String paymentIdentifier) throws Exception {
+	public Order confirmPayment(Long id) throws Exception {
 		logger.info("Checkouting order...");
 		Optional<Order> order = orderRepository.getOrder(id);
 		if(order.isPresent()) {
@@ -151,17 +162,9 @@ public class OrderUseCase {
 				throw new ValidationException("ordr-2006", "Order is already checkout");
 			}
 
-			try {
-				UUID.fromString(paymentIdentifier);
-			} catch (IllegalArgumentException e) {
-				logger.warn("Payment identifier is not a UUID format");
-				throw new ValidationException("ordr-2007", "Payment Identifier invalid");
-			}
-
 			Date currentDate = new Date();
 			checkoutOrder.setReadyToPrepare(currentDate);
 			checkoutOrder.setStatus(OrderStatus.RECEBIDO);
-			checkoutOrder.setPaymentIdentifier(paymentIdentifier);
 
 			Optional<Order> updatedOrder = orderRepository.updateOrder(checkoutOrder);
 			if(updatedOrder.isPresent()) {

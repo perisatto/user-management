@@ -14,14 +14,12 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.perisatto.fiapprj.menuguru.application.usecases.OrderUseCase;
 import com.perisatto.fiapprj.menuguru.domain.entities.order.Order;
 import com.perisatto.fiapprj.menuguru.domain.entities.order.OrderItem;
-import com.perisatto.fiapprj.menuguru.infra.controllers.dtos.CheckoutOrderRequestDTO;
 import com.perisatto.fiapprj.menuguru.infra.controllers.dtos.ChecktoutOrderResponseDTO;
 import com.perisatto.fiapprj.menuguru.infra.controllers.dtos.CreateOrderRequestDTO;
 import com.perisatto.fiapprj.menuguru.infra.controllers.dtos.CreateOrderResponseDTO;
@@ -30,10 +28,10 @@ import com.perisatto.fiapprj.menuguru.infra.controllers.dtos.GetOrderPraparation
 import com.perisatto.fiapprj.menuguru.infra.controllers.dtos.GetOrderResponseDTO;
 import com.perisatto.fiapprj.menuguru.infra.controllers.dtos.OrderItemDTO;
 import com.perisatto.fiapprj.menuguru.infra.controllers.dtos.UpdateOrderRequestDTO;
+import com.perisatto.fiapprj.menuguru.infra.gateways.PaymentConfirmJsonParser;
 
 
 @RestController
-@RequestMapping("/menuguru/v1")
 public class OrderRestController {
 
 	private final OrderUseCase orderUseCase;
@@ -53,8 +51,9 @@ public class OrderRestController {
 			OrderItem item = new OrderItem(requestItem.getId(), null, requestItem.getQuantity());
 			orderItems.add(item);
 		}		
-		Order order = orderUseCase.createOrder(createRequest.getCustomerId(), orderItems);
+		Order order = orderUseCase.createOrder(createRequest.getCustomerId(), orderItems);		
 		CreateOrderResponseDTO response = orderMapper.map(order, CreateOrderResponseDTO.class);
+		response.setQrData(order.getPaymentLocation());
 		URI location = new URI("/orders/" + response.getId());
 		return ResponseEntity.status(HttpStatus.CREATED).location(location).body(response);
 	}
@@ -89,12 +88,15 @@ public class OrderRestController {
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 	
-	@PostMapping(value = "/orders/{orderId}/checkout", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<ChecktoutOrderResponseDTO> checkoutOrder(@PathVariable(value = "orderId") Long orderId, @RequestBody CheckoutOrderRequestDTO checkoutRequest) throws Exception {
+	@PostMapping(value = "/orders/{orderId}/confirmPayment", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<ChecktoutOrderResponseDTO> checkoutOrder(@PathVariable(value = "orderId") Long orderId, @RequestBody String checkoutRequest) throws Exception {		
 		requestProperties.setProperty("resourcePath", "/orders/" + orderId +"/checkout");
-		Order checkoutedOrder = orderUseCase.checkoutOrder(orderId, checkoutRequest.getPaymentIdentifier());
 		ChecktoutOrderResponseDTO response = new ChecktoutOrderResponseDTO();
-		response.setStatus(checkoutedOrder.getStatus().toString());
+		PaymentConfirmJsonParser paymentConfirmJsonParser = new PaymentConfirmJsonParser();
+		if(paymentConfirmJsonParser.isPaymentCreated(checkoutRequest)) {
+			Order checkoutedOrder = orderUseCase.confirmPayment(orderId);
+			response.setStatus(checkoutedOrder.getStatus().toString());			
+		}
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 	
