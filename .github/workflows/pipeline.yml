@@ -4,7 +4,24 @@ run-name: ${{ github.actor }} is running a new build.
 on: [push]
 
 jobs:
+  Unit-Tests:
+    runs-on: ubuntu-latest    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - run: mvn test
+
+      - name: Genarate JaCoCo Badge
+        id: jacoco
+        uses: cicirello/jacoco-badge-generator@v2
+
+      - name: Log coverage percentage
+        run: |
+            echo "Coverage = ${{ steps.jacoco.outputs.coverage }}"
+            echo "Branch coverage = ${{ steps.jacoco.outputs.branches }}"
+            
   Build:
+    needs: [Unit-Tests]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -19,12 +36,6 @@ jobs:
       - name: Build with Maven
         run: mvn -B package --file pom.xml
 
-  Tests:
-    needs: [Build]
-    runs-on: ubuntu-latest    
-    steps:
-      - run: echo "Testes"
-
   Quality:
     needs: [Build]
     if: startsWith(github.ref_name, 'master')
@@ -35,7 +46,7 @@ jobs:
 
   Publish:
     if: startsWith(github.ref_name, 'master')
-    needs: [Tests, Quality]    
+    needs: [Quality]    
     runs-on: ubuntu-latest
     steps:
       - run: echo "Publish"
