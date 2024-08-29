@@ -5,7 +5,7 @@ on: [push]
 
 jobs:
   Build:
-    if: ${{ ! startsWith(github.ref, 'ref/origin/master') }}
+    if: ${{ ! startsWith(github.ref_name, 'master') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
