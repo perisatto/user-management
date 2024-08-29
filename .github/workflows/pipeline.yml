@@ -3,24 +3,8 @@ run-name: ${{ github.actor }} is running a new build.
 
 on: [push]
 
-jobs:
-  Sonar-Cloud:
-    runs-on: ubuntu-latest
-    if: startsWith(github.ref_name, 'master')
-        || startsWith(github.ref_name, 'release/')  
-        || startsWith(github.ref_name, 'develop')    
-    steps:
-    - uses: actions/checkout@v4
-      with:
-        # Disabling shallow clone is recommended for improving relevancy of reporting
-        fetch-depth: 0
-    - name: SonarCloud Scan
-      uses: sonarsource/sonarcloud-github-action@v3
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        
+jobs:       
   Unit-Tests:
-    needs: Sonar-Cloud
     if: startsWith(github.ref_name, 'master')
         || startsWith(github.ref_name, 'release/')  
         || startsWith(github.ref_name, 'develop')
@@ -70,9 +54,25 @@ jobs:
           
       - name: Build with Maven
         run: mvn -B package -DskipTests --file pom.xml
-
-  Publish:
+        
+  Sonar-Cloud:
     needs: Build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref_name, 'master')
+        || startsWith(github.ref_name, 'release/')  
+        || startsWith(github.ref_name, 'develop')    
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        # Disabling shallow clone is recommended for improving relevancy of reporting
+        fetch-depth: 0
+    - name: SonarCloud Scan
+      uses: sonarsource/sonarcloud-github-action@v3
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        
+  Publish:
+    needs: Sonar-Cloud
     if: startsWith(github.ref_name, 'master')
     runs-on: ubuntu-latest
     steps:
