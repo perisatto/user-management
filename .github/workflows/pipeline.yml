@@ -40,7 +40,7 @@ jobs:
       
   Deploy:
     if: startsWith(github.ref_name, 'master')
-    needs: [Tests]    
+    needs: [Publish]    
     runs-on: ubuntu-latest
     steps:
-      - run: echo "Publish"      
+      - run: echo "Deploy"      
