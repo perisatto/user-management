@@ -33,7 +33,7 @@ jobs:
 
   Publish:
     if: startsWith(github.ref_name, 'master')
-    needs: [Tests]    
+    needs: [Tests, Quality]    
     runs-on: ubuntu-latest
     steps:
       - run: echo "Publish"
