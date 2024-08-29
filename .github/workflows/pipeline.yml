@@ -20,11 +20,13 @@ jobs:
         run: mvn -B package --file pom.xml
 
   Tests:
-    runs-on: ubuntu-latest
+    needs: [Build]
+    runs-on: ubuntu-latest    
     steps:
       - run: echo "Testes"
 
   Publish:
+    needs: [Tests]
     runs-on: ubuntu-latest
     steps:
       - run: echo "Testes"    
