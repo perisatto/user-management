@@ -29,6 +29,12 @@ jobs:
         run: |
             echo "Coverage = ${{ steps.jacoco.outputs.coverage }}"
             echo "Branch coverage = ${{ steps.jacoco.outputs.branches }}"
+
+      - name: Upload JaCoCo coverage report
+        uses: actions/upload-artifact@v2
+        with:
+          name: jacoco-report
+          path: target/site/jacoco/
             
   Build:
     needs: Unit-Tests
