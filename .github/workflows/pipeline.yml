@@ -54,25 +54,16 @@ jobs:
           
       - name: Build with Maven
         run: mvn -B package -DskipTests --file pom.xml
-        
-  Sonar-Cloud:
-    needs: Build
-    runs-on: ubuntu-latest
-    if: startsWith(github.ref_name, 'master')
-        || startsWith(github.ref_name, 'release/')  
-        || startsWith(github.ref_name, 'develop')    
-    steps:
-    - uses: actions/checkout@v4
-      with:
-        # Disabling shallow clone is recommended for improving relevancy of reporting
-        fetch-depth: 0
-    - name: SonarCloud Scan
-      uses: sonarsource/sonarcloud-github-action@v3
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      - name: SonarQube Scan
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} # Adicione seu token do SonarQube como um segredo
+        run: mvn sonar:sonar -Dsonar.projectKey=perisatto_menuguru \
+                             -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
+                             -Dsonar.java.binaries=target/classes
         
   Publish:
-    needs: Sonar-Cloud
+    needs: Build
     if: startsWith(github.ref_name, 'master')
     runs-on: ubuntu-latest
     steps:
