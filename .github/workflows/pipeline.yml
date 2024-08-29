@@ -28,7 +28,7 @@ jobs:
   Quality:
     needs: [Build]
     if: startsWith(github.ref_name, 'master')
-        | startsWith(github.ref_name, 'release/')
+        || startsWith(github.ref_name, 'release/')
     runs-on: ubuntu-latest    
     steps:
       - run: echo "Quality"
