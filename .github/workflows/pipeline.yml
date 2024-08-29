@@ -5,7 +5,6 @@ on: [push]
 
 jobs:
   Build:
-    if: ${{ ! startsWith(github.ref_name, 'master') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -26,8 +25,22 @@ jobs:
     steps:
       - run: echo "Testes"
 
+  Quality:
+    needs: [Build]
+    runs-on: ubuntu-latest    
+    steps:
+      - run: echo "Quality"
+
   Publish:
-    needs: [Tests]
+    if: startsWith(github.ref_name, 'master')
+    needs: [Tests]    
     runs-on: ubuntu-latest
     steps:
-      - run: echo "Testes"    
+      - run: echo "Publish"
+      
+  Deploy:
+    if: startsWith(github.ref_name, 'master')
+    needs: [Tests]    
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Publish"      
