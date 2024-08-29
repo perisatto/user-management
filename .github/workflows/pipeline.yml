@@ -31,7 +31,7 @@ jobs:
             echo "Branch coverage = ${{ steps.jacoco.outputs.branches }}"
             
   Build:
-    #needs: Unit-Tests
+    needs: Unit-Tests
     if: startsWith(github.ref_name, 'master')
         || startsWith(github.ref_name, 'release/')  
         || startsWith(github.ref_name, 'develop')    
