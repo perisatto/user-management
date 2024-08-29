@@ -59,6 +59,9 @@ jobs:
         uses: sonarsource/sonarcloud-github-action@v3
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.java.binaries=/home/runner/work/menuguru/menuguru/target/
         
   Publish:
     needs: Build
