@@ -31,7 +31,7 @@ jobs:
             echo "Branch coverage = ${{ steps.jacoco.outputs.branches }}"
             
   Build:
-    needs: [Unit-Tests]
+    needs: Unit-Tests
     if: startsWith(github.ref_name, 'master')
         || startsWith(github.ref_name, 'release/')  
         || startsWith(github.ref_name, 'develop')    
@@ -50,7 +50,7 @@ jobs:
         run: mvn -B package --file pom.xml
 
   Publish:
-    needs: [Build]
+    needs: Build
     if: startsWith(github.ref_name, 'master')
     runs-on: ubuntu-latest
     steps:
@@ -58,21 +58,21 @@ jobs:
 
   Deploy-STG:
     if: startsWith(github.ref_name, 'develop')
-    needs: [Publish]    
+    needs: Publish
     runs-on: ubuntu-latest
     steps:
       - run: echo "Deploy Stage"
 
   Deploy-PRE:
     if: startsWith(github.ref_name, 'release/')
-    needs: [Publish]    
+    needs: Publish    
     runs-on: ubuntu-latest
     steps:
       - run: echo "Deploy Pre-Production"
 
   Deploy-PRD:
     if: startsWith(github.ref_name, 'master')
-    needs: [Publish]    
+    needs: Publish
     runs-on: ubuntu-latest
     steps:
       - run: echo "Deploy Production"      
