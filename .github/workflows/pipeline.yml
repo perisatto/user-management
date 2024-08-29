@@ -5,6 +5,7 @@ on: [push]
 
 jobs:
   Build:
+    if: ${{ ! startsWith(github.ref, 'ref/origin/master') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -21,7 +22,6 @@ jobs:
 
   Tests:
     needs: [Build]
-    if: ${{ ! startsWith(github.ref, 'origin/master') }}
     runs-on: ubuntu-latest    
     steps:
       - run: echo "Testes"
