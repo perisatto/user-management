@@ -50,6 +50,7 @@ jobs:
         run: mvn -B package --file pom.xml
 
   Publish:
+    needs: [Build]
     if: startsWith(github.ref_name, 'master')
     runs-on: ubuntu-latest
     steps:
