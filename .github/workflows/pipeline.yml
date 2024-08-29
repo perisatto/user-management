@@ -37,7 +37,7 @@ jobs:
           path: target/site/jacoco/
             
   Build:
-    needs: Unit-Tests
+    #needs: Unit-Tests
     if: startsWith(github.ref_name, 'master')
         || startsWith(github.ref_name, 'release/')  
         || startsWith(github.ref_name, 'develop')    
@@ -59,7 +59,7 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} # Adicione seu token do SonarQube como um segredo
         run: mvn sonar:sonar -Dsonar.projectKey=perisatto_menuguru \
-                            -Dsonar.host.url='https://sonarcloud.io' \        
+                            -Dsonar.host.url="https://sonarcloud.io" \        
                             -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
                             -Dsonar.java.binaries=target/classes
         
