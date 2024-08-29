@@ -21,6 +21,7 @@ jobs:
 
   Tests:
     needs: [Build]
+    if: ${{ ! startsWith(github.ref, 'master') }}
     runs-on: ubuntu-latest    
     steps:
       - run: echo "Testes"
