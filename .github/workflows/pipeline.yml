@@ -61,7 +61,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
-            -Dsonar.java.binaries=/home/runner/work/menuguru/menuguru/target/
+            -Dsonar.java.binaries=.
         
   Publish:
     needs: Build
