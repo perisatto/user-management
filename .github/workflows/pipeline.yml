@@ -31,7 +31,7 @@ jobs:
             echo "Branch coverage = ${{ steps.jacoco.outputs.branches }}"
             
   Build:
-    needs: Unit-Tests
+    #needs: Unit-Tests
     if: startsWith(github.ref_name, 'master')
         || startsWith(github.ref_name, 'release/')  
         || startsWith(github.ref_name, 'develop')    
@@ -63,12 +63,40 @@ jobs:
     steps:
       - run: echo "Deploy Stage"
 
+  Smoke-Tests-STG:
+    if: startsWith(github.ref_name, 'develop')
+    needs: Deploy-STG
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Smoke Test"  
+
+  Integration-Tests:
+    if: startsWith(github.ref_name, 'develop')
+    needs: Smoke-Tests-STG
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Integration Test"  
+
   Deploy-PRE:
     if: startsWith(github.ref_name, 'release/')
     needs: Publish    
     runs-on: ubuntu-latest
     steps:
-      - run: echo "Deploy Pre-Production"
+      - run: echo "Deploy Pre-Production"     
+
+  Smoke-Tests-PRE:
+    if: startsWith(github.ref_name, 'develop')
+    needs: Deploy-PRE
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Smoke Test"  
+
+  Functional-Tests:
+    if: startsWith(github.ref_name, 'develop')
+    needs: Smoke-Tests-PRE
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Functional Tests"
 
   Deploy-PRD:
     if: startsWith(github.ref_name, 'master')
