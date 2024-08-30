@@ -34,7 +34,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: jacoco-report
-          path: target/site/jacoco/jacoco.xml
+          path: target/site/jacoco/
             
   Build:
     needs: Unit-Tests
