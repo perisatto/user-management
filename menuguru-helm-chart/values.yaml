@@ -19,7 +19,7 @@ autoscaling:
   # targetMemoryUtilizationPercentage: 80
   
 #Configurações da instância MySQL
-mysqlUrl: menuguru.cu44urmo6uwb.us-east-1.rds.amazonaws.com
+mysqlUrl: menuguru.colutxzfkhpm.us-east-1.rds.amazonaws.com
 mysqlPort: 3306
 mysql_user: cm9vdA==
 mysql_password: Skx5NUVZYm9id0NUdkl1WUZPY3g=
