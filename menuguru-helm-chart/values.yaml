@@ -17,3 +17,14 @@ autoscaling:
   maxReplicas: 10
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
+  
+#Configurações da instância MySQL
+mysqlUrl: ${MYSQL_URL}
+mysqlPort: ${MYSQL_PORT}
+mysql_user: ${MYSQL_USER}
+mysql_password: ${MYSQL_PASSWORD}
+
+#Configurações do provedor de pagamentos (Mercado Pago)
+payment_userId: ${PAYMENT_USER_ID}
+payment_accessToken: ${PAYMENT_ACCESS_TOKEN}
+payment_hostWebhook: ${PAYMENT_WEBHOOK}
