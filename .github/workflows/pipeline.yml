@@ -89,4 +89,25 @@ jobs:
     needs: Publish
     runs-on: ubuntu-latest
     steps:
-      - run: echo "Deploy Production"      
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up AWS CLI
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ AWS_SESSION_TOKEN }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Update kubeconfig
+        run: |
+          aws eks update-kubeconfig --name menuguru --region ${{ secrets.AWS_REGION }}
+
+      - name: Install Helm
+        run: |
+          curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+
+      - name: Deploy to EKS using Helm
+        run: |
+          helm upgrade --install skull ./menuguru-helm-chart    
