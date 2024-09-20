@@ -3,5 +3,5 @@ kind: ConfigMap
 metadata:
   name: menuguru-api-config
 data:
-  mysql_url: {{ .Values.mysqlUrl }}:{{ .Values.mysqlPort }}
-  payment_host_webhook: {{ .Values.payment_hostWebhook }}
+  mysql_url: {{ .Env.MYSQL_URL }}:{{ .Env.MYSQL_PORT }}
+  payment_host_webhook: {{ .Env.PAYMENT_WEBHOOK }}

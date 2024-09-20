@@ -17,14 +17,3 @@ autoscaling:
   maxReplicas: 10
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
-  
-#Configurações da instância MySQL
-mysqlUrl: {{ .Env.MYSQL_URL }}
-mysqlPort: {{ .Env.MYSQL_PORT }}
-mysql_user: {{ .Env.MYSQL_USER }}
-mysql_password: {{ .Env.MYSQL_PASSWORD }}
-
-#Configurações do provedor de pagamentos (Mercado Pago)
-payment_userId: {{ .Env.{PAYMENT_USER_ID }}
-payment_accessToken: {{ .Env.{PAYMENT_ACCESS_TOKEN }}
-payment_hostWebhook: {{ .Env.PAYMENT_WEBHOOK }}
