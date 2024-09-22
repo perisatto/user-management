@@ -16,6 +16,9 @@
 	<description>Restaurant orders management system for FIAP Tech Challenge (post graduate course test)</description>
 	<properties>
 		<java.version>22</java.version>
+		<sonar.sources>src/main</sonar.sources>
+		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+		<sonar.jacoco.reportPath>target/site/jacoco/</sonar.jacoco.reportPath>
 	</properties>
 	<dependencies>
 		<dependency>
