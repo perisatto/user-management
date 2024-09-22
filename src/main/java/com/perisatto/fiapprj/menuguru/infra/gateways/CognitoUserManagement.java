@@ -45,7 +45,7 @@ public class CognitoUserManagement implements UserManagement {
             AdminCreateUserResult createUserResult = cognitoClient.adminCreateUser(createUserRequest);
             logger.info("User created with success: " + createUserResult.getUser().getUsername());
         } catch (Exception e) {
-            e.printStackTrace();            
+            logger.error(e.getMessage());            
 			throw new ValidationException("cgto-1000", "Error creating customer. Please refer to log application for details.");
         }
         
@@ -59,7 +59,7 @@ public class CognitoUserManagement implements UserManagement {
             cognitoClient.adminSetUserPassword(request);
             logger.info("User password set for user " + username);
         } catch (Exception e) {
-            e.printStackTrace();            
+        	logger.error(e.getMessage());            
 			throw new ValidationException("cgto-1000", "Error setting password. Please refer to log application for details.");
         }
                         
