@@ -19,11 +19,17 @@ jobs:
           server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
           settings-path: ${{ github.workspace }} # location for the settings.xml file 
       
+      - name: Genarate JaCoCo Badge
+        id: jacoco
+        run: |
+          mvn jacoco:prepare-agent
+      
       - run: mvn test
 
       - name: Genarate JaCoCo Badge
         id: jacoco
-        uses: cicirello/jacoco-badge-generator@v2
+        run: |
+          mvn jacoco:report
 
       - name: Log coverage percentage
         run: |
