@@ -143,8 +143,12 @@ public class CustomerUseCaseTest {
 
 		@Override
 		public User createUser(User user) throws Exception {
-			// TODO Auto-generated method stub
-			return null;
+			User newUser = new User();
+			newUser.setEmail(user.getEmail());
+			newUser.setId(user.getId());
+			newUser.setName(user.getName());
+			newUser.setPassword(user.getPassword());
+			return newUser;
 		}		
 	};
 
