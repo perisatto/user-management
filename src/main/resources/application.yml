@@ -27,6 +27,8 @@ spring:
     userId: ${PAYMENT_USER_ID}
     accessToken: ${PAYMENT_ACCESS_TOKEN}
     hostWebhook: ${PAYMENT_HOST_WEBHOOK}
+  cognito:
+    userPoolId: ${AWS_COGNITO_USER_POOL_ID}
 ---
 spring:
   config:
@@ -35,7 +37,7 @@ spring:
       - docker
       
   datasource:
-    driverClassName: com.mysql.cj.jdbc.Driver
+    driverClassName: com.mysql.cj.jdbc.Driver  
     url: jdbc:mysql://${MYSQL_URL}/menuguru
     username: ${MYSQL_USER}
     password: ${MYSQL_PASSWORD}      
@@ -46,7 +48,9 @@ spring:
   payment:
     userId: ${PAYMENT_USER_ID}
     accessToken: ${PAYMENT_ACCESS_TOKEN}    
-    hostWebhook: ${PAYMENT_HOST_WEBHOOK}            
+    hostWebhook: ${PAYMENT_HOST_WEBHOOK}   
+  cognito:
+    userPoolId: ${AWS_COGNITO_USER_POOL_ID}
 ---        
 spring:
   config:
@@ -65,4 +69,6 @@ spring:
   payment:
     userId: ${PAYMENT_USER_ID}
     accessToken: ${PAYMENT_ACCESS_TOKEN}   
-    hostWebhook: ${PAYMENT_HOST_WEBHOOK}   
+    hostWebhook: ${PAYMENT_HOST_WEBHOOK}  
+  cognito:
+    userPoolId: ${AWS_COGNITO_USER_POOL_ID}     

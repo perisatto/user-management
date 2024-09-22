@@ -8,7 +8,13 @@ jobs:
     if: startsWith(github.ref_name, 'master')
         || startsWith(github.ref_name, 'release/')  
         || startsWith(github.ref_name, 'develop')
-    runs-on: ubuntu-latest    
+    runs-on: ubuntu-latest
+    env:
+      AWS_COGNITO_USER_POOL_ID: ${{ secrets.AWS_COGNITO_USER_POOL_ID }}
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 22
@@ -19,11 +25,18 @@ jobs:
           server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
           settings-path: ${{ github.workspace }} # location for the settings.xml file 
       
-      - run: mvn test
+      - name: Prepare JaCoCo Badge
+        id: jacoco-prepare
+        run: |
+          mvn jacoco:prepare-agent
+      
+      - name: Test Execution 
+        run: mvn test
 
       - name: Genarate JaCoCo Badge
         id: jacoco
-        uses: cicirello/jacoco-badge-generator@v2
+        run: |
+          mvn jacoco:report
 
       - name: Log coverage percentage
         run: |
@@ -35,7 +48,12 @@ jobs:
         with:
           name: jacoco-report
           path: target/site/jacoco/
-            
+          
+      - name: SonarCloud Scan
+        run: |
+          mvn sonar:sonar -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }} -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }} \
+          -Dsonar.host.url=https://sonarcloud.io -Dsonar.qualitygate.wait=true -Dsonar.sources=src/main          
+                
   Build:
     needs: Unit-Tests
     if: startsWith(github.ref_name, 'master')
@@ -49,17 +67,12 @@ jobs:
         with:
           java-version: '22'
           distribution: 'temurin'
-          server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
+          server-id: github
           settings-path: ${{ github.workspace }} # location for the settings.xml file 
           
       - name: Build with Maven
         run: mvn -B package -DskipTests --file pom.xml
 
-      - name: SonarCloud Scan
-        uses: sonarsource/sonarcloud-github-action@v3
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          
   Publish:
     needs: Build
     if: startsWith(github.ref_name, 'master')
