@@ -7,8 +7,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.perisatto.fiapprj.menuguru.application.interfaces.CustomerRepository;
+import com.perisatto.fiapprj.menuguru.application.interfaces.UserManagement;
 import com.perisatto.fiapprj.menuguru.domain.entities.customer.CPF;
 import com.perisatto.fiapprj.menuguru.domain.entities.customer.Customer;
+import com.perisatto.fiapprj.menuguru.domain.entities.user.User;
 import com.perisatto.fiapprj.menuguru.handler.exceptions.NotFoundException;
 import com.perisatto.fiapprj.menuguru.handler.exceptions.ValidationException;
 
@@ -16,9 +18,11 @@ public class CustomerUseCase {
 	
 	static final Logger logger = LogManager.getLogger(CustomerUseCase.class);	
 	private final CustomerRepository customerRepository;
+	private final UserManagement userManagement;
 
-	public CustomerUseCase(CustomerRepository customerRepository) {
+	public CustomerUseCase(CustomerRepository customerRepository, UserManagement userManagement) {
 		this.customerRepository = customerRepository;
+		this.userManagement = userManagement;
 	}
 
 	public Customer createCustomer(String documentNumber, String name, String email) throws Exception {
@@ -35,6 +39,16 @@ public class CustomerUseCase {
 			logger.info("Customer inexistent... creating new customer register.");
 			newCustomer = customerRepository.createCustomer(newCustomer);
 			logger.info("New customer register created.");
+			
+			User user = new User();
+			
+			user.setEmail(newCustomer.getEmail());
+			user.setId(newCustomer.getId());
+			user.setName(newCustomer.getName());
+			user.setPassword(newCustomer.getDocumentNumber().getDocumentNumber());
+			
+			userManagement.createUser(user);
+			
 			return newCustomer;
 		}else {
 			logger.info("Customer already exists. New customer register aborted.");

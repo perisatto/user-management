@@ -78,8 +78,10 @@ public class PaymentWebApi implements PaymentProcessor {
 			logger.error("HTTP Status Code: " + response.getStatusCode());
 			throw new ValidationException("pymt-1000", "Error during payment processes. Please refer to log application for details.");
 		}
+		
 		payment.setId(response.getBody().getInStoreOrderId());
 		payment.setPaymentLocation(response.getBody().getQrData());
+		
 		return payment;
 	}
 
