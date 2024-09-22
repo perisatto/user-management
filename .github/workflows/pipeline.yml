@@ -10,7 +10,8 @@ jobs:
         || startsWith(github.ref_name, 'develop')
     runs-on: ubuntu-latest
     env:
-      AWS_COGNITO_USER_POOL_ID: ${{ secrets.AWS_COGNITO_USER_POOL_ID }}    
+      AWS_COGNITO_USER_POOL_ID: ${{ secrets.AWS_COGNITO_USER_POOL_ID }}
+      AWS_REGION: ${{ secrets.AWS_REGION }}
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 22
