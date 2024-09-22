@@ -11,7 +11,7 @@ import com.perisatto.fiapprj.menuguru.domain.entities.user.User;
 public class UserTest {
 
 	@Test
-	void givenValidProperties_thenCreateUser() throws Exception {
+	void givenValidProperties_thenCreateUser() {
 		Long id = 1L;
 		String customerName = "Roberto Machado";
 		String customerEmail = "roberto.machado@bestmail.com";
