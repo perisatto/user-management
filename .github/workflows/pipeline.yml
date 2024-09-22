@@ -56,10 +56,9 @@ jobs:
         run: mvn -B package -DskipTests --file pom.xml
 
       - name: SonarCloud Scan
-        #uses: sonarsource/sonarcloud-github-action@v3
+        uses: sonarsource/sonarcloud-github-action@v3
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn sonar:sonar -Dsonar.login=${{ secrets.SONAR_TOKEN }}
   Publish:
     needs: Build
     if: startsWith(github.ref_name, 'master')
