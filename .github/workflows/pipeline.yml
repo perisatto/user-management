@@ -24,6 +24,11 @@ jobs:
       - name: Genarate JaCoCo Badge
         id: jacoco
         uses: cicirello/jacoco-badge-generator@v2
+        with:
+          jacoco_xml: target/jacoco-report/jacoco.xml
+          badge_color: 'green'
+          badge_title: 'Coverage'
+          output_path: './badge.svg'        
 
       - name: Log coverage percentage
         run: |
