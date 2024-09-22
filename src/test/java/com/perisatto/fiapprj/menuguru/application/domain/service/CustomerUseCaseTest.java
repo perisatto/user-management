@@ -10,9 +10,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.perisatto.fiapprj.menuguru.application.interfaces.CustomerRepository;
+import com.perisatto.fiapprj.menuguru.application.interfaces.UserManagement;
 import com.perisatto.fiapprj.menuguru.application.usecases.CustomerUseCase;
 import com.perisatto.fiapprj.menuguru.domain.entities.customer.CPF;
 import com.perisatto.fiapprj.menuguru.domain.entities.customer.Customer;
+import com.perisatto.fiapprj.menuguru.domain.entities.user.User;
 import com.perisatto.fiapprj.menuguru.handler.exceptions.NotFoundException;
 import com.perisatto.fiapprj.menuguru.handler.exceptions.ValidationException;
 
@@ -137,6 +139,14 @@ public class CustomerUseCaseTest {
 		}
 	};
 
+	private final UserManagement userManagement = new UserManagement() {
+
+		@Override
+		public User createUser(User user) throws Exception {
+			// TODO Auto-generated method stub
+			return null;
+		}		
+	};
 
 	@Test
 	void givenValidCPF_thenRegisterCustomer() throws Exception {		
@@ -144,7 +154,7 @@ public class CustomerUseCaseTest {
 		String customerEmail = "roberto.machado@bestmail.com";
 		String documentNumber = "35732996010";
 
-		CustomerUseCase newCustomerUseCase = new CustomerUseCase(manageCustomerPort);
+		CustomerUseCase newCustomerUseCase = new CustomerUseCase(manageCustomerPort, userManagement);
 		
 		Customer customer = newCustomerUseCase.createCustomer(documentNumber, customerName, customerEmail);
 
@@ -160,7 +170,7 @@ public class CustomerUseCaseTest {
 		String customerEmail = "roberto.machado@bestmail.com";
 		String documentNumber = "90779778058";
 
-		CustomerUseCase newCustomerUseCase = new CustomerUseCase(manageCustomerPort);
+		CustomerUseCase newCustomerUseCase = new CustomerUseCase(manageCustomerPort, userManagement);
 
 
 		try {
@@ -179,7 +189,7 @@ public class CustomerUseCaseTest {
 		String customerEmail = "roberto.machadobestmail.com";
 		String documentNumber = "90779778057";
 
-		CustomerUseCase newCustomerUseCase = new CustomerUseCase(manageCustomerPort);
+		CustomerUseCase newCustomerUseCase = new CustomerUseCase(manageCustomerPort, userManagement);
 
 		try {
 			Customer customer = newCustomerUseCase.createCustomer(documentNumber, customerName, customerEmail);
@@ -197,7 +207,7 @@ public class CustomerUseCaseTest {
 		String customerEmail = "roberto.machadobestmail.com";
 		String documentNumber = "90779778057";
 
-		CustomerUseCase newCustomerUseCase = new CustomerUseCase(manageCustomerPort);
+		CustomerUseCase newCustomerUseCase = new CustomerUseCase(manageCustomerPort, userManagement);
 
 		try {
 			Customer customer = newCustomerUseCase.createCustomer(documentNumber, customerName, customerEmail);
@@ -213,7 +223,7 @@ public class CustomerUseCaseTest {
 		try {
 			String documentNumber = "90779778057";
 
-			CustomerUseCase newCustomerUseCase = new CustomerUseCase(manageCustomerPort);
+			CustomerUseCase newCustomerUseCase = new CustomerUseCase(manageCustomerPort, userManagement);
 
 			Customer customer = newCustomerUseCase.getCustomerByCPF(documentNumber);
 
@@ -230,7 +240,7 @@ public class CustomerUseCaseTest {
 		try {
 			String documentNumber = "35732996010";
 
-			CustomerUseCase newCustomerUseCase = new CustomerUseCase(manageCustomerPort);
+			CustomerUseCase newCustomerUseCase = new CustomerUseCase(manageCustomerPort, userManagement);
 
 			Customer customer = newCustomerUseCase.getCustomerByCPF(documentNumber);
 
@@ -245,7 +255,7 @@ public class CustomerUseCaseTest {
 
 	@Test
 	void givenValidId_thenGetCustomer () {
-		CustomerUseCase newCustomerUseCase = new CustomerUseCase(manageCustomerPort);
+		CustomerUseCase newCustomerUseCase = new CustomerUseCase(manageCustomerPort, userManagement);
 
 		Long customerId = 10L;
 
@@ -263,7 +273,7 @@ public class CustomerUseCaseTest {
 	@Test
 	void giveInexistentId_thenGetCustomerNotFound () {
 		try {
-			CustomerUseCase newCustomerUseCase = new CustomerUseCase(manageCustomerPort);
+			CustomerUseCase newCustomerUseCase = new CustomerUseCase(manageCustomerPort, userManagement);
 
 			Long customerId = 20L;
 
@@ -279,7 +289,7 @@ public class CustomerUseCaseTest {
 
 	@Test
 	void givenNewName_thenUpdateName () throws Exception {		
-		CustomerUseCase CustomerUseCase = new CustomerUseCase(manageCustomerPortUpdate);
+		CustomerUseCase CustomerUseCase = new CustomerUseCase(manageCustomerPortUpdate, userManagement);
 
 		Long customerId = 10L;
 		String customerName = "Roberto Facao";
@@ -300,7 +310,7 @@ public class CustomerUseCaseTest {
 
 	@Test
 	void givenNewEmail_thenUpdateEmail () throws Exception {
-		CustomerUseCase CustomerUseCase = new CustomerUseCase(manageCustomerPortUpdate);
+		CustomerUseCase CustomerUseCase = new CustomerUseCase(manageCustomerPortUpdate, userManagement);
 
 		Long customerId = 10L;
 		String customerName = "Roberto Facao";
@@ -322,7 +332,7 @@ public class CustomerUseCaseTest {
 	@Test
 	void givenInvalidNewEmail_thenRefusesUpdateEmail () throws Exception {
 		try {
-			CustomerUseCase CustomerUseCase = new CustomerUseCase(manageCustomerPortUpdate);
+			CustomerUseCase CustomerUseCase = new CustomerUseCase(manageCustomerPortUpdate, userManagement);
 
 			Long customerId = 10L;
 			String customerName = "Roberto Facao";
@@ -342,7 +352,7 @@ public class CustomerUseCaseTest {
 
 	@Test
 	void givenNewCPF_thenUpdateCPF () throws Exception {
-		CustomerUseCase CustomerUseCase = new CustomerUseCase(manageCustomerPortUpdate);
+		CustomerUseCase CustomerUseCase = new CustomerUseCase(manageCustomerPortUpdate, userManagement);
 
 		Long customerId = 10L;
 		String customerName = "Roberto Facao";
@@ -364,7 +374,7 @@ public class CustomerUseCaseTest {
 	@Test
 	void givenInvalidNewCPF_thenRefusesUpdateCPF () throws Exception {
 		try {
-			CustomerUseCase CustomerUseCase = new CustomerUseCase(manageCustomerPortUpdate);
+			CustomerUseCase CustomerUseCase = new CustomerUseCase(manageCustomerPortUpdate, userManagement);
 
 			Long customerId = 10L;
 			String customerName = "Roberto Machado";
@@ -384,7 +394,7 @@ public class CustomerUseCaseTest {
 
 	@Test
 	void givenId_thenDeleteCustomer () {
-		CustomerUseCase CustomerUseCase = new CustomerUseCase(manageCustomerPort);
+		CustomerUseCase CustomerUseCase = new CustomerUseCase(manageCustomerPort, userManagement);
 		Boolean deleted = false;
 
 		try {
@@ -401,7 +411,7 @@ public class CustomerUseCaseTest {
 
 	@Test
 	void givenInexistentId_thenRefusesDeleteCustomer () {
-		CustomerUseCase CustomerUseCase = new CustomerUseCase(manageCustomerPort);
+		CustomerUseCase CustomerUseCase = new CustomerUseCase(manageCustomerPort, userManagement);
 		Boolean deleted = false;
 
 		try {

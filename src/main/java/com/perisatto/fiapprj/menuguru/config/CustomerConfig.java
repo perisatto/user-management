@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.perisatto.fiapprj.menuguru.application.interfaces.CustomerRepository;
+import com.perisatto.fiapprj.menuguru.application.interfaces.UserManagement;
 import com.perisatto.fiapprj.menuguru.application.usecases.CustomerUseCase;
 import com.perisatto.fiapprj.menuguru.infra.gateways.CustomerRepositoyJpa;
 import com.perisatto.fiapprj.menuguru.infra.gateways.mappers.CustomerMapper;
@@ -13,8 +14,8 @@ import com.perisatto.fiapprj.menuguru.infra.persistences.repositories.CustomerPe
 public class CustomerConfig {
 
 	@Bean
-	CustomerUseCase customerUseCase(CustomerRepository customerRepository) {
-		return new CustomerUseCase(customerRepository);
+	CustomerUseCase customerUseCase(CustomerRepository customerRepository, UserManagement userManagement) {
+		return new CustomerUseCase(customerRepository, userManagement);
 	}	
 	
 	@Bean
