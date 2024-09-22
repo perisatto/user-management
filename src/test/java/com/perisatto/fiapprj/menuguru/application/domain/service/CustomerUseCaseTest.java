@@ -2,6 +2,8 @@ package com.perisatto.fiapprj.menuguru.application.domain.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatNoException;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import java.util.Optional;
 import java.util.Set;
@@ -150,8 +152,17 @@ public class CustomerUseCaseTest {
 			newUser.setPassword(user.getPassword());
 			return newUser;
 		}		
-	};
+	};	
 
+	
+	@Test
+	void createCustomerUseCase() {
+		CustomerUseCase customerUseCase = new CustomerUseCase(manageCustomerPort, userManagement);
+		
+		assertInstanceOf(CustomerUseCase.class, customerUseCase);
+	}
+	
+	
 	@Test
 	void givenValidCPF_thenRegisterCustomer() throws Exception {		
 		String customerName = "Roberto Machado";
