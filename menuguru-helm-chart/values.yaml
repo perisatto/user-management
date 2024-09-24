@@ -7,7 +7,7 @@ image:
 service:
   #Para executar de forma local, altere o "type" para "NodePort"
   type: LoadBalancer
-  port: 8080
+  port: 80
   cloud: aws
 
 autoscaling:
@@ -28,3 +28,5 @@ mysql_password: ${MYSQL_PASSWORD}
 payment_userId: ${PAYMENT_USER_ID}
 payment_accessToken: ${PAYMENT_ACCESS_TOKEN}
 payment_hostWebhook: ${PAYMENT_WEBHOOK}
+aws_cognito_user_pool_id: ${AWS_COGNITO_USER_POOL_ID}
+aws_region: ${AWS_REGION}
