@@ -33,7 +33,7 @@ jobs:
       - name: Decode Base64 variable
         id: decode_base64
         run: |
-          AWS_COGNITO_USER_POOL_ID=$(echo $AWS_COGNITO_USER_POOL_ID64 | base64 --decode)
+          export AWS_COGNITO_USER_POOL_ID=$(echo $AWS_COGNITO_USER_POOL_ID64 | base64 --decode)
       
       - name: Test Execution 
         run: mvn test
