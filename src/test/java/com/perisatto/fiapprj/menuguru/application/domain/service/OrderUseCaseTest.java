@@ -412,4 +412,13 @@ public class OrderUseCaseTest {
 		}
 
 	}
+	
+	@Test
+	void givenParameters_thenListAllOrders() throws Exception {
+		OrderUseCase OrderUseCase = new OrderUseCase(manageOrderPort, orderCustomerPort, orderProductPort, paymentProcessor, paymentRepository);
+
+		Set<Order> orderList = OrderUseCase.findAllOrders(10, 1);
+
+		assertThat(orderList);	
+	}	
 }
