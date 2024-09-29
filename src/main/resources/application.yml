@@ -23,7 +23,7 @@ spring:
     password: ${MYSQL_PASSWORD}
   data:
     mongodb:
-      uri: mongodb+srv://${MONGODB_USER}:${MONGODB_PASSWORD}@${MONGODB_URL}/?retryWrites=true&w=majority
+      uri: mongodb+srv://${MONGODB_USER}:${MONGODB_PASSWORD}@${MONGODB_URL}
       database: menuguru
   jpa:
     hibernate:
