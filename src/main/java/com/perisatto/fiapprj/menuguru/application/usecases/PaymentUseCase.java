@@ -1,15 +1,22 @@
 package com.perisatto.fiapprj.menuguru.application.usecases;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.perisatto.fiapprj.menuguru.application.interfaces.PaymentProcessor;
+import com.perisatto.fiapprj.menuguru.application.interfaces.PaymentRepository;
 import com.perisatto.fiapprj.menuguru.domain.entities.order.Order;
 import com.perisatto.fiapprj.menuguru.domain.entities.payment.Payment;
 
 public class PaymentUseCase {
 	
-	private final PaymentProcessor paymentProcessor;
+	static final Logger logger = LogManager.getLogger(PaymentUseCase.class);
+	private final PaymentProcessor paymentProcessor;	
+	private final PaymentRepository paymentRepository;
 	
-	public PaymentUseCase(PaymentProcessor paymentProcessor) {
+	public PaymentUseCase(PaymentProcessor paymentProcessor, PaymentRepository paymentRepository) {
 		this.paymentProcessor = paymentProcessor;
+		this.paymentRepository = paymentRepository;
 	}
 
 	public Payment createPayment(Order order) throws Exception {
@@ -17,4 +24,10 @@ public class PaymentUseCase {
 		paymentProcessor.createPayment(payment);
 		return payment;
 	}
+
+	public Boolean registerPayment(String paymentData) {
+		logger.info("Registering payment...");		
+		paymentRepository.registerPayment(paymentData);
+		return true;
+	}	
 }

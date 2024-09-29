@@ -14,6 +14,7 @@ import org.springframework.test.context.ActiveProfiles;
 import com.perisatto.fiapprj.menuguru.application.interfaces.CustomerRepository;
 import com.perisatto.fiapprj.menuguru.application.interfaces.OrderRepository;
 import com.perisatto.fiapprj.menuguru.application.interfaces.PaymentProcessor;
+import com.perisatto.fiapprj.menuguru.application.interfaces.PaymentRepository;
 import com.perisatto.fiapprj.menuguru.application.interfaces.ProductRepository;
 import com.perisatto.fiapprj.menuguru.application.usecases.OrderUseCase;
 import com.perisatto.fiapprj.menuguru.domain.entities.customer.CPF;
@@ -132,7 +133,7 @@ public class OrderUseCaseTest {
 		@Override
 		public Optional<Order> getOrder(Long orderId) throws Exception {
 			if(orderId==1L) {
-				OrderStatus orderStatus = OrderStatus.RECEBIDO;
+				OrderStatus orderStatus = OrderStatus.PENDENTE_PAGAMENTO;
 				Long customerId = 1L;
 
 				Long firstProductId = 1L;
@@ -165,8 +166,9 @@ public class OrderUseCaseTest {
 
 		@Override
 		public Optional<Order> updateOrder(Order order) {
-			// TODO Auto-generated method stub
-			return null;
+			Order newOrder = order;
+			newOrder.setId(1L);
+			return Optional.of(newOrder);
 		}
 
 		@Override
@@ -175,16 +177,23 @@ public class OrderUseCaseTest {
 			return null;
 		}		
 	};
-	
+
 	private PaymentProcessor paymentProcessor = new PaymentProcessor() {
-		
+
 		@Override
 		public Payment createPayment(Payment payment) {
 			// TODO Auto-generated method stub
 			return null;
 		}
 	};
-	
+
+	private PaymentRepository paymentRepository = new PaymentRepository() {
+
+		@Override
+		public Boolean registerPayment(String paymentData) {
+			return true;
+		}
+	};
 
 	@Test
 	void givenValidParameters_thenCreateOrder() throws Exception {
@@ -203,7 +212,7 @@ public class OrderUseCaseTest {
 		orderItems.add(firstItem);
 		orderItems.add(secondItem);	
 
-		OrderUseCase OrderUseCase = new OrderUseCase(manageOrderPort, orderCustomerPort, orderProductPort, paymentProcessor);
+		OrderUseCase OrderUseCase = new OrderUseCase(manageOrderPort, orderCustomerPort, orderProductPort, paymentProcessor, paymentRepository);
 
 		Order order = OrderUseCase.createOrder(customerId, orderItems);
 
@@ -229,7 +238,7 @@ public class OrderUseCaseTest {
 		orderItems.add(secondItem);	
 
 
-		OrderUseCase OrderUseCase = new OrderUseCase(manageOrderPort, orderCustomerPort, orderProductPort, paymentProcessor);
+		OrderUseCase OrderUseCase = new OrderUseCase(manageOrderPort, orderCustomerPort, orderProductPort, paymentProcessor, paymentRepository);
 
 		Order order = OrderUseCase.createOrder(null, orderItems);
 
@@ -255,7 +264,7 @@ public class OrderUseCaseTest {
 			orderItems.add(secondItem);	
 
 
-			OrderUseCase OrderUseCase = new OrderUseCase(manageOrderPort, orderCustomerPort, orderProductPort, paymentProcessor);
+			OrderUseCase OrderUseCase = new OrderUseCase(manageOrderPort, orderCustomerPort, orderProductPort, paymentProcessor, paymentRepository);
 
 			Order order = OrderUseCase.createOrder(customerId, orderItems);
 
@@ -282,7 +291,7 @@ public class OrderUseCaseTest {
 			orderItems.add(secondItem);	
 
 
-			OrderUseCase OrderUseCase = new OrderUseCase(manageOrderPort, orderCustomerPort, orderProductPort, paymentProcessor);
+			OrderUseCase OrderUseCase = new OrderUseCase(manageOrderPort, orderCustomerPort, orderProductPort, paymentProcessor, paymentRepository);
 
 			Order order = OrderUseCase.createOrder(customerId, orderItems);
 
@@ -309,7 +318,7 @@ public class OrderUseCaseTest {
 			orderItems.add(secondItem);	
 
 
-			OrderUseCase OrderUseCase = new OrderUseCase(manageOrderPort, orderCustomerPort, orderProductPort, paymentProcessor);
+			OrderUseCase OrderUseCase = new OrderUseCase(manageOrderPort, orderCustomerPort, orderProductPort, paymentProcessor, paymentRepository);
 
 			Order order = OrderUseCase.createOrder(customerId, orderItems);
 
@@ -337,7 +346,7 @@ public class OrderUseCaseTest {
 			orderItems.add(secondItem);	
 
 
-			OrderUseCase OrderUseCase = new OrderUseCase(manageOrderPort, orderCustomerPort, orderProductPort, paymentProcessor);
+			OrderUseCase OrderUseCase = new OrderUseCase(manageOrderPort, orderCustomerPort, orderProductPort, paymentProcessor, paymentRepository);
 
 			Order order = OrderUseCase.createOrder(customerId, orderItems);
 
@@ -365,7 +374,7 @@ public class OrderUseCaseTest {
 			orderItems.add(secondItem);	
 
 
-			OrderUseCase OrderUseCase = new OrderUseCase(manageOrderPort, orderCustomerPort, orderProductPort, paymentProcessor);
+			OrderUseCase OrderUseCase = new OrderUseCase(manageOrderPort, orderCustomerPort, orderProductPort, paymentProcessor, paymentRepository);
 
 			Order order = OrderUseCase.createOrder(customerId, orderItems);			
 
@@ -379,7 +388,7 @@ public class OrderUseCaseTest {
 	void givenValidOrderId_thenRetrieveOrder() throws Exception {
 		Long orderId = 1L;
 
-		OrderUseCase OrderUseCase = new OrderUseCase(manageOrderPort, orderCustomerPort, orderProductPort, paymentProcessor);
+		OrderUseCase OrderUseCase = new OrderUseCase(manageOrderPort, orderCustomerPort, orderProductPort, paymentProcessor, paymentRepository);
 
 		Order order = OrderUseCase.getOrder(orderId);
 
@@ -393,7 +402,7 @@ public class OrderUseCaseTest {
 		try { 
 			Long orderId = 2L;
 
-			OrderUseCase OrderUseCase = new OrderUseCase(manageOrderPort, orderCustomerPort, orderProductPort, paymentProcessor);
+			OrderUseCase OrderUseCase = new OrderUseCase(manageOrderPort, orderCustomerPort, orderProductPort, paymentProcessor, paymentRepository);
 
 			Order order = OrderUseCase.getOrder(orderId);
 
@@ -402,5 +411,79 @@ public class OrderUseCaseTest {
 			assertThatExceptionOfType(NotFoundException.class);
 		}
 
+	}
+
+	@Test
+	void givenParameters_thenListAllOrders() throws Exception {
+		OrderUseCase OrderUseCase = new OrderUseCase(manageOrderPort, orderCustomerPort, orderProductPort, paymentProcessor, paymentRepository);
+
+		Set<Order> orderList = OrderUseCase.findAllOrders(10, 1);
+
+		assertThat(orderList);	
+	}	
+
+	@Test
+	void givenNullParameters_thenListAllOrders() throws Exception {
+		OrderUseCase OrderUseCase = new OrderUseCase(manageOrderPort, orderCustomerPort, orderProductPort, paymentProcessor, paymentRepository);
+
+		Set<Order> orderList = OrderUseCase.findAllOrders(null, null);
+
+		assertThat(orderList);	
+	}	
+
+	@Test
+	void givenInvalidLimit_thenRefusesListAllOrders()  {
+		OrderUseCase OrderUseCase = new OrderUseCase(manageOrderPort, orderCustomerPort, orderProductPort, paymentProcessor, paymentRepository);
+
+		try {
+			Set<Order> orderList = OrderUseCase.findAllOrders(100, 1);
+		}catch (Exception e) {
+			assertThatExceptionOfType(ValidationException.class);
+		}
+	}
+
+	@Test
+	void givenInvalidPage_thenRefusesListAllOrders()  {
+		OrderUseCase OrderUseCase = new OrderUseCase(manageOrderPort, orderCustomerPort, orderProductPort, paymentProcessor, paymentRepository);
+
+		try {
+			Set<Order> orderList = OrderUseCase.findAllOrders(10, 0);
+		}catch (Exception e) {
+			assertThatExceptionOfType(ValidationException.class);
+		}
+	}
+
+	@Test
+	void givenParameters_thenUpdateOrders() throws Exception {
+		OrderUseCase orderUseCase = new OrderUseCase(manageOrderPort, orderCustomerPort, orderProductPort, paymentProcessor, paymentRepository);
+
+		Order order = orderUseCase.getOrder(1L);
+
+		order = orderUseCase.updateOrder(1L, "FINALIZADO");
+
+		assertThat(order);	
+	}
+
+	@Test
+	void givenInvalidParameters_thenRefusesUpdateOrders() {
+		OrderUseCase orderUseCase = new OrderUseCase(manageOrderPort, orderCustomerPort, orderProductPort, paymentProcessor, paymentRepository);
+
+		try {
+			Order order = orderUseCase.getOrder(1L);
+
+			order = orderUseCase.updateOrder(1L, "RECEBIDO");
+
+		}catch (Exception e) {
+			assertThatExceptionOfType(ValidationException.class);
+		}	
+	}
+
+	@Test 
+	void givenOrder_thenConfirmPayment () throws Exception {
+		OrderUseCase orderUseCase = new OrderUseCase(manageOrderPort, orderCustomerPort, orderProductPort, paymentProcessor, paymentRepository);
+
+		Order order = orderUseCase.confirmPayment(1L, "{\"action\":\"payment.updated\",\"api_version\":\"v1\",\"data\":{\"id\":\"88436747797\"},\"date_created\":\"2024-09-25T01:28:07Z\",\"id\":116049466094,\"live_mode\":true,\"type\":\"payment\",\"user_id\":\"1891840516\"}");
+
+		assertThat(order);
 	}
 }
