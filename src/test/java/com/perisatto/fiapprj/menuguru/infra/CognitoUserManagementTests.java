@@ -1,8 +1,6 @@
 package com.perisatto.fiapprj.menuguru.infra;
 
-import static org.assertj.core.api.Assertions.assertThatException;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.catchException;
 
 import java.util.Random;
 
