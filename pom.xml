@@ -10,7 +10,7 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.perisatto.fiapprj</groupId>
-	<artifactId>menuguru</artifactId>
+	<artifactId>menuguru-customer</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>menuguru</name>
 	<description>Restaurant orders management system for FIAP Tech Challenge (post graduate course test)</description>
