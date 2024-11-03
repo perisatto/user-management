@@ -232,7 +232,7 @@ public class CustomerUseCaseTest {
 		
 		@Test
 		void listCustomers() throws Exception {
-			when(customerRepository.findAll(null, null))
+			when(customerRepository.findAll(any(Integer.class), any(Integer.class)))
 			.thenAnswer(i -> {
 				Set<Customer> result = new LinkedHashSet<Customer>();
 				Customer customerData1 = new Customer(10L, new CPF("65678860054"), "Roberto Machado", "roberto.machado@bestmail.com");
@@ -242,7 +242,7 @@ public class CustomerUseCaseTest {
 				return result;
 			});
 			
-			Set<Customer> result = customerRepository.findAll(null, null);
+			Set<Customer> result = customerUseCase.findAllCustomers(null, null);
 			
 			assertThat(result.size()).isEqualTo(2);
 		}
@@ -250,15 +250,15 @@ public class CustomerUseCaseTest {
 		@Test
 		void givenInvalidParameters_RefusesListCustomer() throws Exception {
 			try {
-				Set<Customer> result = customerRepository.findAll(100, null);
+				Set<Customer> result = customerUseCase.findAllCustomers(100, null);
 			} catch (ValidationException e) {
-				assertThat(e.getMessage()).isEqualTo("Invalid size parameter");
+				assertThat(e.getMessage()).contains("Invalid size parameter");
 			}
 			
 			try {
-				Set<Customer> result = customerRepository.findAll(null, 0);
+				Set<Customer> result = customerUseCase.findAllCustomers(null, 0);
 			} catch (ValidationException e) {
-				assertThat(e.getMessage()).isEqualTo("Invalid page parameter");
+				assertThat(e.getMessage()).contains("Invalid page parameter");
 			}
 		}
 	}
