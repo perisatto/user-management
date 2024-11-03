@@ -8,6 +8,7 @@ jobs:
     if: startsWith(github.ref_name, 'master')
         || startsWith(github.ref_name, 'release/')  
         || startsWith(github.ref_name, 'develop')
+		|| startsWith(github.ref_name, 'feature')
     runs-on: ubuntu-latest
     env:
       AWS_COGNITO_USER_POOL_ID: ${{ secrets.AWS_COGNITO_USER_POOL_ID }}    
