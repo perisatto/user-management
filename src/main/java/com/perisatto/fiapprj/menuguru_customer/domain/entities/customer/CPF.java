@@ -24,8 +24,6 @@ public class CPF {
 
 	private boolean isCpfValid(String documentNumber) {
 		
-		logger.debug("Starting CPF validation. CPF: " + documentNumber);
-		
 		if (documentNumber.equals("00000000000") ||
 				documentNumber.equals("11111111111") ||
 				documentNumber.equals("22222222222") || documentNumber.equals("33333333333") ||
