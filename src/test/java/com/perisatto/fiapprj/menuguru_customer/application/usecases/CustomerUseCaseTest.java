@@ -69,6 +69,24 @@ public class CustomerUseCaseTest {
 			assertThat(customer.getName()).isEqualTo(customerName);
 			assertThat(customer.getEmail()).isEqualTo(customerEmail);
 		}
+		
+		@Test
+		void givenAlreadyExistentCustomer_thenRefusesToCreateCustomer() throws Exception {
+			Customer customerData = new Customer(10L, new CPF("35732996010"), "Roberto Machado", "roberto.machado@bestmail.com");
+			
+			when(customerRepository.getCustomerByCPF(any(CPF.class)))
+			.thenReturn(Optional.of(customerData));
+			
+			String customerName = "Roberto Machado";
+			String customerEmail = "roberto.machado@bestmail.com";
+			String documentNumber = "35732996010";
+			
+			try {
+				Customer customer = customerUseCase.createCustomer(documentNumber, customerName, customerEmail);
+			} catch (ValidationException e) {
+				assertThat(e.getMessage()).isEqualTo("Customer already exists");
+			} 	
+		}
 
 		@Test
 		void givenInvalidCPF_thenRefusesToRegisterCustomer() throws Exception {
@@ -166,7 +184,7 @@ public class CustomerUseCaseTest {
 		void givenInexistentCPF_thenGetNotFound () throws Exception {
 			
 			when(customerRepository.getCustomerByCPF(any(CPF.class)))
-			.thenAnswer(i -> i.getArgument(0));			
+			.thenReturn(Optional.empty());			
 			
 			try {
 				String documentNumber = "35732996010";
@@ -174,12 +192,8 @@ public class CustomerUseCaseTest {
 				CustomerUseCase newCustomerUseCase = new CustomerUseCase(customerRepository, userManagement);
 
 				Customer customer = newCustomerUseCase.getCustomerByCPF(documentNumber);
-
-				assertThat(customer.getName()).isNullOrEmpty();
 			} catch (NotFoundException e) {
 				assertThat(e.getMessage()).isEqualTo("Customer not found");
-			} catch (Exception e) {
-				assertThat(e.getMessage()).doesNotContain("Customer not found");
 			}
 
 		}
