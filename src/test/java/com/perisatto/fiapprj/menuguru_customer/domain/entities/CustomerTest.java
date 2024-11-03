@@ -65,6 +65,47 @@ public class CustomerTest {
 	}
 	
 	@Test
+	void givenNullEmail_thenRefusesToRegisterCustomer() throws Exception {
+		try { 
+			String customerName = "Roberto Machado";
+			String documentNumber = "90779778057";
+
+			CPF customerCPF = new CPF(documentNumber);
+			Customer customer = new Customer(null, customerCPF, customerName, null);
+		}catch (Exception e) {
+			assertThat(e.getMessage()).contains("Error validating customer data");
+		}
+	}
+	
+	@Test
+	void givenEmptyEmail_thenRefusesToRegisterCustomer() throws Exception {
+		try { 
+			String customerName = "Roberto Machado";
+			String documentNumber = "90779778057";
+			String customerEmail = "";
+
+			CPF customerCPF = new CPF(documentNumber);
+			Customer customer = new Customer(null, customerCPF, customerName, customerEmail);
+		}catch (Exception e) {
+			assertThat(e.getMessage()).contains("Error validating customer data");
+		}
+	}
+	
+	@Test
+	void givenBlankEmail_thenRefusesToRegisterCustomer() throws Exception {
+		try { 
+			String customerName = "Roberto Machado";
+			String documentNumber = "90779778057";
+			String customerEmail = " ";
+
+			CPF customerCPF = new CPF(documentNumber);
+			Customer customer = new Customer(null, customerCPF, customerName, customerEmail);
+		}catch (Exception e) {
+			assertThat(e.getMessage()).contains("Error validating customer data");
+		}
+	}
+	
+	@Test
 	void givenEmptyName_thenRefusesToRegisterCustomer() throws Exception {
 		try { 
 			String customerName = "";
@@ -83,5 +124,24 @@ public class CustomerTest {
 		}catch (Exception e) {
 			assertThat(e.getMessage()).contains("empty, null or blank name");
 		}
+	}
+	
+	@Test
+	void givenNewData_updateCustomer() throws Exception {
+		String customerName = "Roberto Machado";
+		String customerEmail = "roberto.machado@bestmail.com";
+		String documentNumber = "90779778057";
+
+		CPF customerCPF = new CPF(documentNumber);
+		Customer customer = new Customer(null, customerCPF, customerName, customerEmail);
+		
+		customer.setDocumentNumber(new CPF("23640699041"));
+		customer.setName("Roberto Facao");
+		customer.setEmail("robertofacao@bestmail.com");
+		customer.setId(1L);
+		
+		assertThat(customer.getName()).isEqualTo("Roberto Facao");
+		assertThat(customer.getEmail()).isEqualTo("robertofacao@bestmail.com");
+		assertThat(customer.getDocumentNumber().getDocumentNumber()).isEqualTo("23640699041");
 	}
 }

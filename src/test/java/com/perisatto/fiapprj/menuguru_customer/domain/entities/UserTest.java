@@ -23,6 +23,7 @@ public class UserTest {
 		user.setName(customerName);
 		user.setPassword(documentNumber);
 		
+		assertThat(user.getId()).isEqualTo(id);
 		assertThat(user.getName()).isEqualTo(customerName);
 		assertThat(user.getEmail()).isEqualTo(customerEmail);
 		assertThat(user.getPassword()).isEqualTo(documentNumber);

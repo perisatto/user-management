@@ -256,6 +256,12 @@ public class CustomerUseCaseTest {
 			}
 			
 			try {
+				Set<Customer> result = customerUseCase.findAllCustomers(-1, null);
+			} catch (ValidationException e) {
+				assertThat(e.getMessage()).contains("Invalid size parameter");
+			}
+			
+			try {
 				Set<Customer> result = customerUseCase.findAllCustomers(null, 0);
 			} catch (ValidationException e) {
 				assertThat(e.getMessage()).contains("Invalid page parameter");
