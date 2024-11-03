@@ -69,18 +69,18 @@ public class CustomerUseCaseTest {
 			assertThat(customer.getName()).isEqualTo(customerName);
 			assertThat(customer.getEmail()).isEqualTo(customerEmail);
 		}
-		
+
 		@Test
 		void givenAlreadyExistentCustomer_thenRefusesToCreateCustomer() throws Exception {
 			Customer customerData = new Customer(10L, new CPF("35732996010"), "Roberto Machado", "roberto.machado@bestmail.com");
-			
+
 			when(customerRepository.getCustomerByCPF(any(CPF.class)))
 			.thenReturn(Optional.of(customerData));
-			
+
 			String customerName = "Roberto Machado";
 			String customerEmail = "roberto.machado@bestmail.com";
 			String documentNumber = "35732996010";
-			
+
 			try {
 				Customer customer = customerUseCase.createCustomer(documentNumber, customerName, customerEmail);
 			} catch (ValidationException e) {
@@ -115,10 +115,10 @@ public class CustomerUseCaseTest {
 
 			when(customerRepository.createCustomer(any(Customer.class)))
 			.thenAnswer(i -> i.getArgument(0));
-		
+
 			when(userManagement.createUser(any(User.class)))
 			.thenAnswer(u -> u.getArgument(0));
-			
+
 			String customerName = "Roberto Machado";
 			String customerEmail = "roberto.machadobestmail.com";
 			String documentNumber = "90779778057";
@@ -137,10 +137,10 @@ public class CustomerUseCaseTest {
 
 			when(customerRepository.createCustomer(any(Customer.class)))
 			.thenAnswer(i -> i.getArgument(0));
-		
+
 			when(userManagement.createUser(any(User.class)))
 			.thenAnswer(u -> u.getArgument(0));			
-			
+
 			String customerName = "";
 			String customerEmail = "roberto.machadobestmail.com";
 			String documentNumber = "90779778057";
@@ -161,31 +161,25 @@ public class CustomerUseCaseTest {
 
 		@Test
 		void givenCPF_thenGetCustomerData() throws Exception {
-			
+
+			Customer customerData = new Customer(10L, new CPF("90779778057"), "Roberto Machado", "roberto.machado@bestmail.com");
+
 			when(customerRepository.getCustomerByCPF(any(CPF.class)))
-			.thenAnswer(i -> i.getArgument(0));
-					
-			try {
-				String documentNumber = "90779778057";
+			.thenReturn(Optional.of(customerData));
+			
+			String documentNumber = "90779778057";
 
-				CustomerUseCase newCustomerUseCase = new CustomerUseCase(customerRepository, userManagement);
+			Customer customer = customerUseCase.getCustomerByCPF(documentNumber);
 
-				Customer customer = newCustomerUseCase.getCustomerByCPF(documentNumber);
-
-				assertThat(customer.getDocumentNumber().getDocumentNumber()).isEqualTo(documentNumber);
-			} catch (NotFoundException e) {
-				assertThat(e.getMessage()).doesNotContain("Customer not found");
-			} catch (Exception e) {
-				assertThat(e.getMessage()).doesNotContain("Customer not found");
-			}		
+			assertThat(customer.getDocumentNumber().getDocumentNumber()).isEqualTo(documentNumber);
 		}
 
 		@Test
 		void givenInexistentCPF_thenGetNotFound () throws Exception {
-			
+
 			when(customerRepository.getCustomerByCPF(any(CPF.class)))
 			.thenReturn(Optional.empty());			
-			
+
 			try {
 				String documentNumber = "35732996010";
 
@@ -200,9 +194,9 @@ public class CustomerUseCaseTest {
 
 		@Test
 		void givenValidId_thenGetCustomer () throws Exception {
-			
+
 			Customer customerData = new Customer(10L, new CPF("90779778057"), "Roberto Machado", "roberto.machado@bestmail.com");			
-			
+
 			when(customerRepository.getCustomerById(10L))
 			.thenReturn(Optional.of(customerData));	
 
@@ -219,10 +213,10 @@ public class CustomerUseCaseTest {
 
 		@Test
 		void giveInexistentId_thenGetCustomerNotFound () throws Exception {
-			
+
 			when(customerRepository.getCustomerById(any(Long.class)))
 			.thenReturn(Optional.empty());
-			
+
 			try {
 				Long customerId = 20L;
 
@@ -241,18 +235,18 @@ public class CustomerUseCaseTest {
 	class AtualizarCliente {
 		@Test
 		void givenNewName_thenUpdateName () throws Exception {		
-			
+
 			Customer customerData = new Customer(10L, new CPF("65678860054"), "Roberto Machado", "roberto.machado@bestmail.com");
-			
+
 			when(customerRepository.getCustomerById(any(Long.class)))
 			.thenReturn(Optional.of(customerData));
-			
+
 			when(customerRepository.updateCustomer(any(Customer.class)))
 			.thenAnswer(i -> 
-				{ 
-					Optional<Customer> customer = Optional.of(i.getArgument(0));
-					return customer;
-				});
+			{ 
+				Optional<Customer> customer = Optional.of(i.getArgument(0));
+				return customer;
+			});
 
 			String customerName = "Roberto Facao";
 			String customerEmail = "roberto.facao@bestmail.com";
@@ -269,16 +263,16 @@ public class CustomerUseCaseTest {
 		@Test
 		void givenNewEmail_thenUpdateEmail () throws Exception {
 			Customer customerData = new Customer(10L, new CPF("65678860054"), "Roberto Machado", "roberto.machado@bestmail.com");
-			
+
 			when(customerRepository.getCustomerById(any(Long.class)))
 			.thenReturn(Optional.of(customerData));
-			
+
 			when(customerRepository.updateCustomer(any(Customer.class)))
 			.thenAnswer(i -> 
-				{ 
-					Optional<Customer> customer = Optional.of(i.getArgument(0));
-					return customer;
-				});
+			{ 
+				Optional<Customer> customer = Optional.of(i.getArgument(0));
+				return customer;
+			});
 
 			Long customerId = 10L;
 			String customerName = "Roberto Facao";
@@ -297,10 +291,53 @@ public class CustomerUseCaseTest {
 		}
 
 		@Test
+		void duringDatabaseProblem_RefusesUpdateCustomer() throws Exception {
+			Customer customerData = new Customer(10L, new CPF("65678860054"), "Roberto Machado", "roberto.machado@bestmail.com");
+
+			when(customerRepository.getCustomerById(any(Long.class)))
+			.thenReturn(Optional.of(customerData));
+			
+			when(customerRepository.updateCustomer(any(Customer.class)))
+			.thenReturn(Optional.empty());
+			
+			Long customerId = 10L;
+			String customerName = "Roberto Facao";
+			String customerEmail = "roberto.facao@bestmail.com";
+			String documentNumber = "65678860054";
+			
+			try {
+				Customer newCustomerData = customerUseCase.updateCustomer(customerId, documentNumber, customerName, customerEmail);
+			} catch (Exception e) {
+				assertThatExceptionOfType(Exception.class);
+				assertThat(e.getMessage()).contains("Error while updating customer data. Please refer to application log for details.");
+			}
+
+		}
+		
+		@Test
+		void givenInvalidId_RefusesUpdateCustomer() throws Exception {
+			when(customerRepository.getCustomerById(any(Long.class)))
+			.thenReturn(Optional.empty());
+			
+			Long customerId = 10L;
+			String customerName = "Roberto Facao";
+			String customerEmail = "roberto.facao@bestmail.com";
+			String documentNumber = "65678860054";
+			
+			try {
+				Customer newCustomerData = customerUseCase.updateCustomer(customerId, documentNumber, customerName, customerEmail);
+			} catch (Exception e) {
+				assertThatExceptionOfType(NotFoundException.class);
+				assertThat(e.getMessage()).contains("Customer not found");
+			}
+			
+		}
+		
+		@Test
 		void givenInvalidNewEmail_thenRefusesUpdateEmail () throws Exception {
 			try {
 				Customer customerData = new Customer(10L, new CPF("65678860054"), "Roberto Machado", "roberto.machado@bestmail.com");
-				
+
 				when(customerRepository.getCustomerById(any(Long.class)))
 				.thenReturn(Optional.of(customerData));
 
@@ -321,16 +358,16 @@ public class CustomerUseCaseTest {
 		@Test
 		void givenNewCPF_thenUpdateCPF () throws Exception {
 			Customer customerData = new Customer(10L, new CPF("65678860054"), "Roberto Machado", "roberto.machado@bestmail.com");
-			
+
 			when(customerRepository.getCustomerById(any(Long.class)))
 			.thenReturn(Optional.of(customerData));
-			
+
 			when(customerRepository.updateCustomer(any(Customer.class)))
 			.thenAnswer(i -> 
-				{ 
-					Optional<Customer> customer = Optional.of(i.getArgument(0));
-					return customer;
-				});
+			{ 
+				Optional<Customer> customer = Optional.of(i.getArgument(0));
+				return customer;
+			});
 
 			Long customerId = 10L;
 			String customerName = "Roberto Facao";
@@ -351,7 +388,7 @@ public class CustomerUseCaseTest {
 		void givenInvalidNewCPF_thenRefusesUpdateCPF () throws Exception {
 			try {
 				Customer customerData = new Customer(10L, new CPF("65678860054"), "Roberto Machado", "roberto.machado@bestmail.com");
-				
+
 				when(customerRepository.getCustomerById(any(Long.class)))
 				.thenReturn(Optional.of(customerData));
 
@@ -375,16 +412,16 @@ public class CustomerUseCaseTest {
 		@Test
 		void givenId_thenDeleteCustomer () throws Exception {
 			Customer customerData = new Customer(10L, new CPF("90779778057"), "Roberto Machado", "roberto.machado@bestmail.com");
-			
+
 			when(customerRepository.deleteCustomer(any(Long.class)))
 			.thenReturn(true);
-			
+
 			when(customerRepository.getCustomerById(any(Long.class)))
 			.thenReturn(Optional.of(customerData))
 			.thenThrow(NotFoundException.class);
 
 			Boolean deleted = false;
-			
+
 			try {
 				Long customerId = 10L;
 				deleted = customerUseCase.deleteCustomer(customerId);
