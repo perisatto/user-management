@@ -84,7 +84,7 @@ public class CustomerUseCaseTest {
 			String documentNumber = "35732996010";
 
 			try {
-				Customer customer = customerUseCase.createCustomer(documentNumber, customerName, customerEmail);
+				customerUseCase.createCustomer(documentNumber, customerName, customerEmail);
 			} catch (ValidationException e) {
 				assertThat(e.getMessage()).isEqualTo("Customer already exists");
 			} 	
@@ -104,7 +104,7 @@ public class CustomerUseCaseTest {
 			String documentNumber = "90779778058";
 
 			try {
-				Customer customer = customerUseCase.createCustomer(documentNumber, customerName, customerEmail);
+				customerUseCase.createCustomer(documentNumber, customerName, customerEmail);
 			} catch (ValidationException e) {
 				assertThat(e.getMessage()).isEqualTo("Invalid document number");
 			} catch (Exception e) {
@@ -126,7 +126,7 @@ public class CustomerUseCaseTest {
 			String documentNumber = "90779778057";
 
 			try {
-				Customer customer = customerUseCase.createCustomer(documentNumber, customerName, customerEmail);
+				customerUseCase.createCustomer(documentNumber, customerName, customerEmail);
 			} catch (ValidationException e) {
 				assertThat(e.getMessage()).contains("invalid e-mail format");
 			} catch (Exception e) {
@@ -148,7 +148,7 @@ public class CustomerUseCaseTest {
 			String documentNumber = "90779778057";
 
 			try {
-				Customer customer = customerUseCase.createCustomer(documentNumber, customerName, customerEmail);
+				customerUseCase.createCustomer(documentNumber, customerName, customerEmail);
 			} catch (ValidationException e) {
 				assertThat(e.getMessage()).contains("empty, null or blank name");
 			} catch (Exception e) {
@@ -187,7 +187,7 @@ public class CustomerUseCaseTest {
 
 				CustomerUseCase newCustomerUseCase = new CustomerUseCase(customerRepository, userManagement);
 
-				Customer customer = newCustomerUseCase.getCustomerByCPF(documentNumber);
+				newCustomerUseCase.getCustomerByCPF(documentNumber);
 			} catch (NotFoundException e) {
 				assertThat(e.getMessage()).isEqualTo("Customer not found");
 			}
@@ -250,19 +250,19 @@ public class CustomerUseCaseTest {
 		@Test
 		void givenInvalidParameters_RefusesListCustomer() throws Exception {
 			try {
-				Set<Customer> result = customerUseCase.findAllCustomers(100, null);
+				customerUseCase.findAllCustomers(100, null);
 			} catch (ValidationException e) {
 				assertThat(e.getMessage()).contains("Invalid size parameter");
 			}
 			
 			try {
-				Set<Customer> result = customerUseCase.findAllCustomers(-1, null);
+				customerUseCase.findAllCustomers(-1, null);
 			} catch (ValidationException e) {
 				assertThat(e.getMessage()).contains("Invalid size parameter");
 			}
 			
 			try {
-				Set<Customer> result = customerUseCase.findAllCustomers(null, 0);
+				customerUseCase.findAllCustomers(null, 0);
 			} catch (ValidationException e) {
 				assertThat(e.getMessage()).contains("Invalid page parameter");
 			}
@@ -338,9 +338,7 @@ public class CustomerUseCaseTest {
 			});
 
 			Long customerId = 10L;
-			String customerEmail = "roberto.facao@bestmail.com";
-
-			Customer customer = customerUseCase.getCustomerById(customerId); 
+			String customerEmail = "roberto.facao@bestmail.com"; 
 
 			Customer newCustomerData = customerUseCase.updateCustomer(customerId, null, null, customerEmail);
 
@@ -365,7 +363,7 @@ public class CustomerUseCaseTest {
 			String documentNumber = "65678860054";
 			
 			try {
-				Customer newCustomerData = customerUseCase.updateCustomer(customerId, documentNumber, customerName, customerEmail);
+				customerUseCase.updateCustomer(customerId, documentNumber, customerName, customerEmail);
 			} catch (Exception e) {
 				assertThatExceptionOfType(Exception.class);
 				assertThat(e.getMessage()).contains("Error while updating customer data. Please refer to application log for details.");
@@ -384,7 +382,7 @@ public class CustomerUseCaseTest {
 			String documentNumber = "65678860054";
 			
 			try {
-				Customer newCustomerData = customerUseCase.updateCustomer(customerId, documentNumber, customerName, customerEmail);
+				customerUseCase.updateCustomer(customerId, documentNumber, customerName, customerEmail);
 			} catch (Exception e) {
 				assertThatExceptionOfType(NotFoundException.class);
 				assertThat(e.getMessage()).contains("Customer not found");
@@ -405,9 +403,7 @@ public class CustomerUseCaseTest {
 				String customerEmail = "roberto.facaobestmail.com";
 				String documentNumber = "90779778057";
 
-				Customer customer = customerUseCase.getCustomerById(customerId); 
-
-				Customer newCustomerData = customerUseCase.updateCustomer(customerId, documentNumber, customerName, customerEmail);
+				customerUseCase.updateCustomer(customerId, documentNumber, customerName, customerEmail);
 			}catch (Exception e) {
 				assertThatExceptionOfType(ValidationException.class);
 				assertThat(e.getMessage()).contains("invalid e-mail format");
@@ -431,8 +427,6 @@ public class CustomerUseCaseTest {
 			Long customerId = 10L;
 			String documentNumber = "65678860054";
 
-			Customer customer = customerUseCase.getCustomerById(customerId); 
-
 			Customer newCustomerData = customerUseCase.updateCustomer(customerId, documentNumber, null, null);
 
 			assertThat(newCustomerData.getId()).isEqualTo(customerId);
@@ -452,9 +446,7 @@ public class CustomerUseCaseTest {
 				String customerEmail = "roberto.machado@bestmail.com";
 				String documentNumber = "90779778056";
 
-				Customer customer = customerUseCase.getCustomerById(customerId); 
-
-				Customer newCustomerData = customerUseCase.updateCustomer(customerId, documentNumber, customerName, customerEmail);
+				customerUseCase.updateCustomer(customerId, documentNumber, customerName, customerEmail);
 			}catch (Exception e) {
 				assertThatExceptionOfType(ValidationException.class);
 				assertThat(e.getMessage()).contains("Invalid document number");
@@ -480,7 +472,7 @@ public class CustomerUseCaseTest {
 			try {
 				Long customerId = 10L;
 				deleted = customerUseCase.deleteCustomer(customerId);
-				Customer customer = customerUseCase.getCustomerById(customerId);
+				customerUseCase.getCustomerById(customerId);
 			} catch (NotFoundException e) {
 				assertThat(deleted).isTrue();
 			} catch (Exception e) {
@@ -496,7 +488,7 @@ public class CustomerUseCaseTest {
 
 			try {
 				Long customerId = 20L;
-				Boolean deleted = customerUseCase.deleteCustomer(customerId);
+				customerUseCase.deleteCustomer(customerId);
 			} catch (NotFoundException e) {
 				assertThatExceptionOfType(NotFoundException.class);
 			} 
