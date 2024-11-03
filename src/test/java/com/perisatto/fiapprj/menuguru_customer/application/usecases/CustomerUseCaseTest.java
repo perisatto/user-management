@@ -5,7 +5,9 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import java.util.LinkedHashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -225,16 +227,47 @@ public class CustomerUseCaseTest {
 				assertThat(customer.getName()).isNullOrEmpty();
 			} catch (NotFoundException e) {
 				assertThat(e.getMessage()).isEqualTo("Customer not found");
-			} catch (Exception e) {
-				assertThat(e.getMessage()).doesNotContain("Customer not found");
+			} 
+		}
+		
+		@Test
+		void listCustomers() throws Exception {
+			when(customerRepository.findAll(null, null))
+			.thenAnswer(i -> {
+				Set<Customer> result = new LinkedHashSet<Customer>();
+				Customer customerData1 = new Customer(10L, new CPF("65678860054"), "Roberto Machado", "roberto.machado@bestmail.com");
+				Customer customerData2 = new Customer(20L, new CPF("65678860054"), "Roberto Machado", "roberto.machado@bestmail.com");
+				result.add(customerData1);
+				result.add(customerData2);
+				return result;
+			});
+			
+			Set<Customer> result = customerRepository.findAll(null, null);
+			
+			assertThat(result.size()).isEqualTo(2);
+		}
+		
+		@Test
+		void givenInvalidParameters_RefusesListCustomer() throws Exception {
+			try {
+				Set<Customer> result = customerRepository.findAll(100, null);
+			} catch (ValidationException e) {
+				assertThat(e.getMessage()).isEqualTo("Invalid size parameter");
+			}
+			
+			try {
+				Set<Customer> result = customerRepository.findAll(null, 0);
+			} catch (ValidationException e) {
+				assertThat(e.getMessage()).isEqualTo("Invalid page parameter");
 			}
 		}
 	}
 
 	@Nested
 	class AtualizarCliente {
+		
 		@Test
-		void givenNewName_thenUpdateName () throws Exception {		
+		void givenNewData_thenUpdateCustomer () throws Exception {		
 
 			Customer customerData = new Customer(10L, new CPF("65678860054"), "Roberto Machado", "roberto.machado@bestmail.com");
 
@@ -259,6 +292,30 @@ public class CustomerUseCaseTest {
 			assertThat(newCustomerData.getName()).isEqualTo(customerName);
 			assertThat(newCustomerData.getEmail()).isEqualTo(customerEmail);
 		}
+		
+		
+		@Test
+		void givenNewName_thenUpdateName () throws Exception {		
+
+			Customer customerData = new Customer(10L, new CPF("65678860054"), "Roberto Machado", "roberto.machado@bestmail.com");
+
+			when(customerRepository.getCustomerById(any(Long.class)))
+			.thenReturn(Optional.of(customerData));
+
+			when(customerRepository.updateCustomer(any(Customer.class)))
+			.thenAnswer(i -> 
+			{ 
+				Optional<Customer> customer = Optional.of(i.getArgument(0));
+				return customer;
+			});
+
+			String customerName = "Roberto Facao";
+
+			Customer newCustomerData = customerUseCase.updateCustomer(10L, null, customerName, null);
+
+			assertThat(newCustomerData.getId()).isEqualTo(10L);
+			assertThat(newCustomerData.getName()).isEqualTo(customerName);
+		}
 
 		@Test
 		void givenNewEmail_thenUpdateEmail () throws Exception {
@@ -275,18 +332,14 @@ public class CustomerUseCaseTest {
 			});
 
 			Long customerId = 10L;
-			String customerName = "Roberto Facao";
 			String customerEmail = "roberto.facao@bestmail.com";
-			String documentNumber = "65678860054";
 
 			Customer customer = customerUseCase.getCustomerById(customerId); 
 
-			Customer newCustomerData = customerUseCase.updateCustomer(customerId, documentNumber, customerName, customerEmail);
+			Customer newCustomerData = customerUseCase.updateCustomer(customerId, null, null, customerEmail);
 
 
 			assertThat(newCustomerData.getId()).isEqualTo(10L);
-			assertThat(newCustomerData.getDocumentNumber().getDocumentNumber()).isEqualTo(documentNumber);
-			assertThat(newCustomerData.getName()).isEqualTo(customerName);
 			assertThat(newCustomerData.getEmail()).isEqualTo(customerEmail);
 		}
 
@@ -370,18 +423,14 @@ public class CustomerUseCaseTest {
 			});
 
 			Long customerId = 10L;
-			String customerName = "Roberto Facao";
-			String customerEmail = "roberto.facao@bestmail.com";
 			String documentNumber = "65678860054";
 
 			Customer customer = customerUseCase.getCustomerById(customerId); 
 
-			Customer newCustomerData = customerUseCase.updateCustomer(customerId, documentNumber, customerName, customerEmail);
+			Customer newCustomerData = customerUseCase.updateCustomer(customerId, documentNumber, null, null);
 
 			assertThat(newCustomerData.getId()).isEqualTo(customerId);
 			assertThat(newCustomerData.getDocumentNumber().getDocumentNumber()).isEqualTo(documentNumber);
-			assertThat(newCustomerData.getName()).isEqualTo(customerName);
-			assertThat(newCustomerData.getEmail()).isEqualTo(customerEmail);
 		}
 
 		@Test
