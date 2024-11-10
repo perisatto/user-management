@@ -82,7 +82,7 @@ public class StepDefinition {
 	    response = given()
 	    		.contentType(MediaType.APPLICATION_JSON_VALUE)
 	    		.when()
-	    		.get(ENDPOINT_CUSTOMER_API + "/" + createCustomerResponse.getId().toString());
+	    		.get(ENDPOINT_CUSTOMER_API + "/{customerId}", createCustomerResponse.getId().toString());
 	}
 
 	@Then("the customer information is retrieved")
@@ -104,7 +104,7 @@ public class StepDefinition {
 				.contentType(MediaType.APPLICATION_JSON_VALUE)
 				.body(updateCustomerRequest)
 				.when()
-				.patch(ENDPOINT_CUSTOMER_API + "/" + createCustomerResponse.getId().toString());
+				.patch(ENDPOINT_CUSTOMER_API + "/{customerId}", createCustomerResponse.getId().toString());
 		return response.then().extract().as(GetCustomerResponseDTO.class);
 	}
 

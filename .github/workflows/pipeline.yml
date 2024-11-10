@@ -79,9 +79,7 @@ jobs:
     needs: Build
     if: startsWith(github.ref_name, 'master')
     runs-on: ubuntu-latest     
-    steps:
-      - run: echo "Publish"
-      
+    steps:      
       - name: Checkout code
         uses: actions/checkout@v4
 
