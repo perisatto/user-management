@@ -8,7 +8,7 @@ spring:
       fail-on-unknown-properties: true     
 server:
   servlet:
-    context-path: "/menuguru-customer/v1"      
+    context-path: "/menuguru-customers/v1"      
 ---
 spring:
   config:
@@ -18,7 +18,7 @@ spring:
   
   datasource:
     driverClassName: com.mysql.cj.jdbc.Driver  
-    url: jdbc:mysql://${MYSQL_URL}/menuguru-customer
+    url: jdbc:mysql://${MYSQL_URL}/menuguru
     username: ${MYSQL_USER}
     password: ${MYSQL_PASSWORD}
   jpa:
@@ -26,4 +26,4 @@ spring:
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
   cognito:
-    userPoolId: ${AWS_COGNITO_USER_POOL_ID}   
+    userPoolId: ${AWS_COGNITO_USER_POOL_ID}
