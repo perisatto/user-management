@@ -26,42 +26,42 @@ public class CognitoUserManagement implements UserManagement {
 	
 	@Override
 	public User createUser(User user) throws Exception {
-//		String userPoolId = env.getProperty("spring.cognito.userPoolId");
-//        String username = user.getEmail();
-//        String password = user.getPassword();        
-//        String name = user.getName();
-//        Long id = user.getId();
-//		
-//		AWSCognitoIdentityProvider cognitoClient = AWSCognitoIdentityProviderClientBuilder.defaultClient();
-//		AdminCreateUserRequest createUserRequest = new AdminCreateUserRequest()
-//                .withUserPoolId(userPoolId)
-//                .withUsername(username)
-//                .withUserAttributes(new AttributeType().withName("email").withValue(username))
-//                .withUserAttributes(new AttributeType().withName("given_name").withValue(name))
-//                .withUserAttributes(new AttributeType().withName("custom:id").withValue(id.toString()))
-//                .withUserAttributes(new AttributeType().withName("email_verified").withValue("true"))
-//                .withMessageAction("SUPPRESS");
-//        try {
-//            AdminCreateUserResult createUserResult = cognitoClient.adminCreateUser(createUserRequest);
-//            logger.info("User created with success: " + createUserResult.getUser().getUsername());
-//        } catch (Exception e) {
-//            logger.error(e.getMessage());            
-//			throw new ValidationException("cgto-1000", "Error creating customer. Please refer to log application for details.");
-//        }
-//        
-//        AdminSetUserPasswordRequest request = new AdminSetUserPasswordRequest()
-//                .withUserPoolId(userPoolId)
-//                .withUsername(username)
-//                .withPassword(password)
-//                .withPermanent(true);
-//
-//        try {
-//            cognitoClient.adminSetUserPassword(request);
-//            logger.info("User password set for user " + username);
-//        } catch (Exception e) {
-//        	logger.error(e.getMessage());            
-//			throw new ValidationException("cgto-1000", "Error setting password. Please refer to log application for details.");
-//        }
+		String userPoolId = env.getProperty("spring.cognito.userPoolId");
+        String username = user.getEmail();
+        String password = user.getPassword();        
+        String name = user.getName();
+        Long id = user.getId();
+		
+		AWSCognitoIdentityProvider cognitoClient = AWSCognitoIdentityProviderClientBuilder.defaultClient();
+		AdminCreateUserRequest createUserRequest = new AdminCreateUserRequest()
+                .withUserPoolId(userPoolId)
+                .withUsername(username)
+                .withUserAttributes(new AttributeType().withName("email").withValue(username))
+                .withUserAttributes(new AttributeType().withName("given_name").withValue(name))
+                .withUserAttributes(new AttributeType().withName("custom:id").withValue(id.toString()))
+                .withUserAttributes(new AttributeType().withName("email_verified").withValue("true"))
+                .withMessageAction("SUPPRESS");
+        try {
+            AdminCreateUserResult createUserResult = cognitoClient.adminCreateUser(createUserRequest);
+            logger.info("User created with success: " + createUserResult.getUser().getUsername());
+        } catch (Exception e) {
+            logger.error(e.getMessage());            
+			throw new ValidationException("cgto-1000", "Error creating customer. Please refer to log application for details.");
+        }
+        
+        AdminSetUserPasswordRequest request = new AdminSetUserPasswordRequest()
+                .withUserPoolId(userPoolId)
+                .withUsername(username)
+                .withPassword(password)
+                .withPermanent(true);
+
+        try {
+            cognitoClient.adminSetUserPassword(request);
+            logger.info("User password set for user " + username);
+        } catch (Exception e) {
+        	logger.error(e.getMessage());            
+			throw new ValidationException("cgto-1000", "Error setting password. Please refer to log application for details.");
+        }
                         
         return user;
 	}	

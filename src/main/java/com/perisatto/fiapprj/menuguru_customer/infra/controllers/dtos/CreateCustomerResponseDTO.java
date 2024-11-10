@@ -1,10 +1,14 @@
 package com.perisatto.fiapprj.menuguru_customer.infra.controllers.dtos;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+
 public class CreateCustomerResponseDTO {
 	private Long id;
 	private String documentNumber;
 	private String name;
-	private String eMail;
+	
+	@JsonAlias(value = "email")
+	private String email;
 	
 	
 	public Long getId() {
@@ -27,10 +31,10 @@ public class CreateCustomerResponseDTO {
 		this.name = name;
 	}
 	
-	public String geteMail() {
-		return eMail;
+	public String getEmail() {
+		return email;
 	}
-	public void seteMail(String eMail) {
-		this.eMail = eMail;
+	public void setEmail(String email) {
+		this.email = email;
 	}
 }

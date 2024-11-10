@@ -14,7 +14,7 @@
       "type": "string",
       "minLength": 1
     },
-    "eMail": {
+    "email": {
       "type": "string",
       "minLength": 1
     }
@@ -23,6 +23,6 @@
     "id",
     "documentNumber",
     "name",
-    "eMail"
+    "email"
   ]
 }
