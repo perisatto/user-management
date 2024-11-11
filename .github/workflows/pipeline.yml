@@ -99,14 +99,14 @@ jobs:
 
       - name: Build Docker image
         run: |
-          REPO_NAME=${GITHUB_REPOSITORY#*/}
-          RELEASE_NAME=${GITHUB_BASE_REF}        
+          REPO_NAME=${GITHUB_REPOSITORY#*/}		
+          RELEASE_NAME=latest		
           docker build -t rperisatto/$REPO_NAME:$RELEASE_NAME .
 
       - name: Push Docker image
         run: |
           REPO_NAME=${GITHUB_REPOSITORY#*/}		
-          RELEASE_NAME=${GITHUB_BASE_REF}
+          RELEASE_NAME=latest
           docker push rperisatto/$REPO_NAME:$RELEASE_NAME
 
   Deploy-PRD:
