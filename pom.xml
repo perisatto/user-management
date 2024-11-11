@@ -11,7 +11,7 @@
 	</parent>
 	<groupId>com.perisatto.fiapprj</groupId>
 	<artifactId>menuguru-customer</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<name>menuguru-customer</name>
 	<description>Restaurant orders management system for FIAP Tech Challenge (post graduate course test)</description>
 	<properties>
@@ -132,7 +132,11 @@
 	                    <exclude>**/bdd/**</exclude>
 	                </excludes>
 	            </configuration>
-	        </plugin>			
+	        </plugin>		
+		    <plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-help-plugin</artifactId>
+		    </plugin>
 		</plugins>
 	</build>
 
