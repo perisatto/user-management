@@ -12,7 +12,7 @@
 	<groupId>com.perisatto.fiapprj</groupId>
 	<artifactId>menuguru-customer</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>menuguru</name>
+	<name>menuguru-customer</name>
 	<description>Restaurant orders management system for FIAP Tech Challenge (post graduate course test)</description>
 	<properties>
 		<java.version>22</java.version>
