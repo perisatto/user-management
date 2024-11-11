@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: menuguru-customer-deployment
+  labels:
+    menuguru.fiapprj.perisatto.com/name: service
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      menuguru.fiapprj.perisatto.com/name: customer-service
+  template:
+    metadata:
+      name: menuguru-customer-deployment
+      labels:
+        menuguru.fiapprj.perisatto.com/name: customer-service
+    spec:           
+      containers:
+        - name: menuguru-service
+          image: rperisatto/menuguru-customer_service:{{ .Values.image.tag }}
+          env:
+            - name: MYSQL_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: menuguru-customer-config
+                  key: mysql_url
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: menuguru-customer-secret
+                  key: mysql_user      
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: menuguru-customer-secret
+                  key: mysql_password
+            - name: AWS_COGNITO_USER_POOL_ID
+              valueFrom:
+                secretKeyRef:
+                  name: menuguru-customer-secret
+                  key: aws_cognito_user_pool_id
+            - name: AWS_REGION
+              valueFrom:
+                configMapKeyRef:
+                  name: menuguru-customer-config
+                  key: aws_region                                    
+          ports:
+            - containerPort: 8080      
+          readinessProbe:
+            httpGet:
+              path: /menuguru-customer/v1/actuator/health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /menuguru-customer/v1/actuator/health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 60
