@@ -27,11 +27,6 @@ jobs:
           server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
           settings-path: ${{ github.workspace }} # location for the settings.xml file
 
-      - name: Get version
-        run: |
-            VERSION=$(mvn help:evaluate -Dexpression="project.version" -q -DforceStdout)
-            echo "VERSION: $VERSION"
-
       - name: Prepare JaCoCo Badge
         id: jacoco-prepare
         run: |
@@ -92,13 +87,15 @@ jobs:
     needs: System-Tests
     if: startsWith(github.ref_name, 'master')
     runs-on: ubuntu-latest   
+    env:
+      VERSION: latest
     steps:      
       - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Get version
         run: |
-            VERSION=$(mvn help:evaluate -Dexpression="project.version" -q -DforceStdout)
+            $VERSION=$(mvn help:evaluate -Dexpression="project.version" -q -DforceStdout)
             echo "VERSION: $VERSION"  
 
       - name: Log in to Docker Hub
