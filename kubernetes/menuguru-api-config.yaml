@@ -1,6 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: menuguru-db-config
-data:
-  mysql_url: menuguru-db-svc
