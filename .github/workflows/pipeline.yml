@@ -99,7 +99,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          REPO_NAME=${GITHUB_REPOSITORY#*/}		
+          REPO_NAME=${GITHUB_REPOSITORY#*/}
           RELEASE_NAME=${GITHUB_BASE_REF}        
           docker build -t rperisatto/$REPO_NAME:$RELEASE_NAME .
 
