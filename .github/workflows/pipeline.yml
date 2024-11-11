@@ -86,7 +86,10 @@ jobs:
   Publish:
     needs: System-Tests
     if: startsWith(github.ref_name, 'master')
-    runs-on: ubuntu-latest     
+    runs-on: ubuntu-latest   
+    env:
+      REPO_NAME: ${GITHUB_REPOSITORY#*/}
+      RELEASE_NAME: ${GITHUB_BASE_REF}
     steps:      
       - name: Checkout code
         uses: actions/checkout@v4
@@ -99,11 +102,11 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t rperisatto/menuguru-api_service:latest .
+          docker build -t rperisatto/$REPO_NAME:$RELEASE_NAME .
 
       - name: Push Docker image
         run: |
-          docker push rperisatto/menuguru-api_service:latest
+          docker push rperisatto/$REPO_NAME:$RELEASE_NAME
 
   Deploy-PRD:
     if: startsWith(github.ref_name, 'master')
@@ -114,14 +117,9 @@ jobs:
       MYSQL_PORT: '${{secrets.MYSQL_PORT}}'
       MYSQL_USER: '${{secrets.MYSQL_USER}}'
       MYSQL_PASSWORD: '${{secrets.MYSQL_PASSWORD}}'
-      PAYMENT_USER_ID: '${{secrets.PAYMENT_USER_ID}}'
-      PAYMENT_ACCESS_TOKEN: '${{secrets.PAYMENT_ACCESS_TOKEN}}'
-      PAYMENT_WEBHOOK: '${{secrets.PAYMENT_WEBHOOK}}'
       AWS_COGNITO_USER_POOL_ID64: ${{ secrets.AWS_COGNITO_USER_POOL_ID64 }}
       AWS_REGION: ${{ secrets.AWS_REGION }}
-      MONGODB_USER: '${{secrets.MONGODB_USER}}'
-      MONGODB_PASSWORD: '${{secrets.MONGODB_PASSWORD}}'
-      MONGODB_URL: '${{secrets.MONGODB_URL}}'
+      REPO_NAME: ${GITHUB_REPOSITORY#*/}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -144,7 +142,5 @@ jobs:
 
       - name: Deploy to EKS using Helm
         run: |
-          helm upgrade --install skull --set mysqlUrl=$MYSQL_URL --set mysqlPort=$MYSQL_PORT --set mysql_user=$MYSQL_USER --set mysql_password=$MYSQL_PASSWORD \
-          --set payment_userId=$PAYMENT_USER_ID --set payment_accessToken=$PAYMENT_ACCESS_TOKEN --set payment_hostWebhook=$PAYMENT_WEBHOOK \
-          --set aws_cognito_user_pool_id=$AWS_COGNITO_USER_POOL_ID64 --set aws_region=$AWS_REGION --set mongodb_user=$MONGODB_USER \
-          --set mongodb_password=$MONGODB_PASSWORD --set mongodb_url=$MONGODB_URL ./menuguru-helm-chart
+          helm upgrade --install $REPO_NAME --set mysqlUrl=$MYSQL_URL --set mysqlPort=$MYSQL_PORT --set mysql_user=$MYSQL_USER --set mysql_password=$MYSQL_PASSWORD \          
+          --set aws_cognito_user_pool_id=$AWS_COGNITO_USER_POOL_ID64 --set aws_region=$AWS_REGION ./helm-chart
