@@ -87,9 +87,6 @@ jobs:
     needs: System-Tests
     if: startsWith(github.ref_name, 'master')
     runs-on: ubuntu-latest   
-    env:
-      REPO_NAME: ${GITHUB_REPOSITORY#*/}
-      RELEASE_NAME: ${GITHUB_BASE_REF}
     steps:      
       - name: Checkout code
         uses: actions/checkout@v4
@@ -106,6 +103,8 @@ jobs:
 
       - name: Push Docker image
         run: |
+          REPO_NAME=${GITHUB_REPOSITORY#*/}		
+          RELEASE_NAME=${GITHUB_BASE_REF}
           docker push rperisatto/$REPO_NAME:$RELEASE_NAME
 
   Deploy-PRD:
@@ -119,7 +118,6 @@ jobs:
       MYSQL_PASSWORD: '${{secrets.MYSQL_PASSWORD}}'
       AWS_COGNITO_USER_POOL_ID64: ${{ secrets.AWS_COGNITO_USER_POOL_ID64 }}
       AWS_REGION: ${{ secrets.AWS_REGION }}
-      REPO_NAME: ${GITHUB_REPOSITORY#*/}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -142,5 +140,6 @@ jobs:
 
       - name: Deploy to EKS using Helm
         run: |
+          REPO_NAME=${GITHUB_REPOSITORY#*/}		
           helm upgrade --install $REPO_NAME --set mysqlUrl=$MYSQL_URL --set mysqlPort=$MYSQL_PORT --set mysql_user=$MYSQL_USER --set mysql_password=$MYSQL_PASSWORD \          
           --set aws_cognito_user_pool_id=$AWS_COGNITO_USER_POOL_ID64 --set aws_region=$AWS_REGION ./helm-chart
