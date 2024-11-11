@@ -19,7 +19,7 @@ spec:
     spec:           
       containers:
         - name: menuguru-service
-          image: rperisatto/menuguru-customer_service:{{ .Values.image.tag }}
+          image: rperisatto/menuguru-customer:{{ .Values.image.tag }}
           env:
             - name: MYSQL_URL
               valueFrom:
