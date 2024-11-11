@@ -88,15 +88,15 @@ jobs:
     if: startsWith(github.ref_name, 'master')
     runs-on: ubuntu-latest   
     env:
-      VERSION: latest
+      PROJECT_VERSION: latest
     steps:      
       - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Get version
         run: |
-            mvn help:evaluate -Dexpression="project.version" -q -DforceStdout >> $VERSION
-            echo "VERSION: $VERSION"  
+            $VERSION=mvn help:evaluate -Dexpression="project.version" -q -DforceStdout
+            echo "$VERSION" >> $PROJECT_VERSION
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
@@ -107,12 +107,12 @@ jobs:
       - name: Build Docker image
         run: |
           REPO_NAME=${GITHUB_REPOSITORY#*/}		
-          docker build -t rperisatto/$REPO_NAME:$VERSION .
+          docker build -t rperisatto/$REPO_NAME:$PROJECT_VERSION .
 
       - name: Push Docker image
         run: |
           REPO_NAME=${GITHUB_REPOSITORY#*/}		
-          docker push rperisatto/$REPO_NAME:$VERSION
+          docker push rperisatto/$REPO_NAME:$PROJECT_VERSION
 
   Deploy-PRD:
     if: startsWith(github.ref_name, 'master')
