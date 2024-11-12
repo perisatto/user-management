@@ -87,14 +87,18 @@ jobs:
     needs: System-Tests
     if: startsWith(github.ref_name, 'master')
     runs-on: ubuntu-latest   
+    outputs:
+      version: ${{ steps.getVersion.outputs.VERSION }}
     steps:      
       - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Get version
+        id: getVersion
         run: |
             VERSION=$(mvn help:evaluate -Dexpression="project.version" -q -DforceStdout)
             echo "VERSION=$VERSION" >> $GITHUB_ENV
+            echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
@@ -127,7 +131,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - run: echo $VERSION
+      - env:
+          VERSION: ${{needs.Publish.outputs.VERSION}}
+        run: echo $VERSION
 
       - name: Set up AWS CLI
         uses: aws-actions/configure-aws-credentials@v1
