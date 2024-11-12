@@ -2,7 +2,7 @@
 replicaCount: 1
 
 image:
-  tag: latest
+  tag: ${VERSION}
 
 service:
   #Para executar de forma local, altere o "type" para "NodePort"
