@@ -95,7 +95,7 @@ jobs:
 
       - name: Get version
         run: |
-            $VERSION=mvn help:evaluate -Dexpression="project.version" -q -DforceStdout
+            $VERSION=$(mvn help:evaluate -Dexpression="project.version" -q -DforceStdout)
             echo "$VERSION" >> $PROJECT_VERSION
 
       - name: Log in to Docker Hub
