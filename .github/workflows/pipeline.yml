@@ -127,6 +127,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - run: echo $VERSION
+
       - name: Set up AWS CLI
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -146,5 +148,5 @@ jobs:
       - name: Deploy to EKS using Helm
         run: |
           REPO_NAME=${GITHUB_REPOSITORY#*/}		
-          helm upgrade --install $REPO_NAME --set mysqlUrl=$MYSQL_URL --set mysqlPort=$MYSQL_PORT --set mysql_user=$MYSQL_USER --set mysql_password=$MYSQL_PASSWORD \          
+          helm upgrade --install $REPO_NAME --set image.tag=$VERSION --set mysqlUrl=$MYSQL_URL --set mysqlPort=$MYSQL_PORT --set mysql_user=$MYSQL_USER --set mysql_password=$MYSQL_PASSWORD \          
           --set aws_cognito_user_pool_id=$AWS_COGNITO_USER_POOL_ID64 --set aws_region=$AWS_REGION ./helm-chart
