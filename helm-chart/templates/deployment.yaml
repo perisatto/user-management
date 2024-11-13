@@ -18,7 +18,7 @@ spec:
         menuguru.fiapprj.perisatto.com/name: customer-service
     spec:           
       containers:
-        - name: menuguru-service
+        - name: menuguru-customer-service
           image: rperisatto/menuguru-customer:{{ .Values.image.tag }}
           env:
             - name: MYSQL_URL
