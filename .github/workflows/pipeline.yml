@@ -131,10 +131,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - env:
-          VERSION: ${{needs.Publish.outputs.VERSION}}
-        run: echo $VERSION
-
       - name: Set up AWS CLI
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -152,6 +148,8 @@ jobs:
           curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 
       - name: Deploy to EKS using Helm
+        env:
+          VERSION: ${{needs.Publish.outputs.VERSION}}	  
         run: |
           REPO_NAME=${GITHUB_REPOSITORY#*/}		
           helm upgrade --install $REPO_NAME --set image.tag=$VERSION --set mysqlUrl=$MYSQL_URL --set mysqlPort=$MYSQL_PORT --set mysql_user=$MYSQL_USER --set mysql_password=$MYSQL_PASSWORD \          
