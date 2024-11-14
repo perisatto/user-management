@@ -1,12 +1,12 @@
 spring:
   application:
-    name: menuguru
+    name: menuguru-customer
   jackson:
     deserialization:
       fail-on-unknown-properties: true     
 server:
   servlet:
-    context-path: "/menuguru/v1"      
+    context-path: "/menuguru-customer/v1"      
 ---    
 spring:
   config:
@@ -21,10 +21,6 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
-      ddl-auto: none      
-  payment:
-    userId: ${PAYMENT_USER_ID}
-    accessToken: ${PAYMENT_ACCESS_TOKEN}   
-    hostWebhook: ${PAYMENT_HOST_WEBHOOK}  
+      ddl-auto: none        
   cognito:
     userPoolId: ${AWS_COGNITO_USER_POOL_ID}     
