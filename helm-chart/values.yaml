@@ -1,6 +1,5 @@
 #Caso esteja executando com o Autoscaling desabilitado, especifique o número de replicas
 replicaCount: 1
-namespace: menuguru-customer
 
 image:
   tag: "${VERSION}"
