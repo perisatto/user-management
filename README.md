@@ -35,7 +35,7 @@ Abstraímos aqui os componentes do Kubernetes (ControlPlane, etcd, etc) para foc
 
 Para verificação de cobertura de testes foi utilizado o serviço Sonar Cloud. O percentual de cobertura de testes deste projeto foi de 81.1%, podendo ser verificado na imagem abaixo ou diretamente no [Sonar Cloud](https://sonarcloud.io/project/overview?id=perisatto_menuguru-customer):
 
-![SonarCloud - Cobertura de Testes](/images/Cobertura de Testes.png)
+![SonarCloud - Cobertura de Testes](/images/Cobertura.png)
 
 
 # Demonstração
