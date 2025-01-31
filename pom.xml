@@ -10,10 +10,10 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.perisatto.fiapprj</groupId>
-	<artifactId>menuguru-customer</artifactId>
+	<artifactId>user-management</artifactId>
 	<version>1.0.0</version>
-	<name>menuguru-customer</name>
-	<description>Restaurant orders management system for FIAP Tech Challenge (post graduate course test)</description>
+	<name>user-management</name>
+	<description>Video trimmer for FIAP Tech Challenge (post graduate course test)</description>
 	<properties>
 		<java.version>22</java.version>
 	</properties>
