@@ -31,7 +31,7 @@ jobs:
 
       - name: Update kubeconfig
         run: |
-          aws eks update-kubeconfig --name menuguru --region ${{ secrets.AWS_REGION }}
+          aws eks update-kubeconfig --name vfc-cluster --region ${{ secrets.AWS_REGION }}
 
       - name: Install Helm
         run: |
